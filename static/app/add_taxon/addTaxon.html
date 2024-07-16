@@ -1,0 +1,33 @@
+<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+
+<!--Contenu global de la page-->
+<div class="container main-zone" style="padding: 1px">
+    <!--Panel général de la page-->
+    <div class="panel panel-default" id="add-taxon-zone" style="padding: 10px">
+        <!--Titre du panel général contenant les principaux boutons d'action-->
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Ajouter un taxon</h3>
+                </div>
+            </div>
+        </div>
+        <!--Corps du panel général-->
+        <div class="panel-body">
+            <!-- Formulaire pour ajouter un taxon -->
+            <form name="addTaxonForm" ng-submit="ctrl.addTaxon(ctrl.newTaxon)">
+                <!-- Champ pour le nom du taxon -->
+                <div class="form-group">
+                    <label for="inputNom">Nom du taxon</label>
+                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                </div>
+                <!-- Autres champs à ajouter selon tes besoins (par exemple, famille, ordre, etc.) -->
+
+                <!-- Bouton pour soumettre le formulaire -->
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+

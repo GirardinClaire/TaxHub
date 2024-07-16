@@ -93,6 +93,11 @@ app.config(['$routeProvider',
           "level": 1
         }
       })
+      .when('/addTaxon', {
+        templateUrl: 'static/app/add_taxon/addTaxon.html',
+        controller: 'addTaxonCtrl',
+        controllerAs: 'ctrl'
+      })
       .otherwise({
         redirectTo: '/taxref'
       });
