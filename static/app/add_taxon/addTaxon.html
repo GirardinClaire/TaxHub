@@ -1,10 +1,10 @@
-<div ng-include src="'static/app/components/header-template.html'"  onload=""  autoscroll=""></div>
+<div ng-include src="'static/app/components/header-template.html'" onload="" autoscroll=""></div>
 
-<!--Contenu global de la page-->
+<!-- Contenu global de la page -->
 <div class="container main-zone" style="padding: 1px">
-    <!--Panel général de la page-->
+    <!-- Panel général de la page -->
     <div class="panel panel-default" id="add-taxon-zone" style="padding: 10px">
-        <!--Titre du panel général contenant les principaux boutons d'action-->
+        <!-- Titre du panel général contenant les principaux boutons d'action -->
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-6">
@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <!--Corps du panel général-->
+        <!-- Corps du panel général -->
         <div class="panel-body">
 
             <!-- Formulaire pour ajouter un taxon -->
@@ -20,123 +20,119 @@
 
                 <!-- Les différents champs du formulaire -->
 
-                <!-- 
-                cd_nom == cd_ref ==> à générer automatiquement négatif (clé primaire)
-                 -->
-
-                 <div class="form-group"> <!-- lb_nom -->
+                <div class="form-group"> <!-- lb_nom -->
                     <label for="inputNom">Nom du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.lb_nom" required>
                 </div>
 
                 <div class="form-group"> <!-- nom_complet -->
-                    <label for="inputNom">Nom complet du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputNomComplet">Nom complet du taxon</label>
+                    <input type="text" class="form-control" id="inputNomComplet" ng-model="ctrl.newTaxon.nom_complet">
                 </div>
 
                 <div class="form-group"> <!-- nom_complet_html -->
-                    <label for="inputNom">Nom complet html du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputNomCompletHtml">Nom complet HTML du taxon</label>
+                    <input type="text" class="form-control" id="inputNomCompletHtml" ng-model="ctrl.newTaxon.nom_complet_html">
                 </div>
 
                 <div class="form-group"> <!-- nom_valide -->
-                    <label for="inputNom">Nom valide du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputNomValide">Nom valide du taxon</label>
+                    <input type="text" class="form-control" id="inputNomValide" ng-model="ctrl.newTaxon.nom_valide">
                 </div>
 
                 <div class="form-group"> <!-- nom_vern -->
-                    <label for="inputNom">Nom vern du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputNomVern">Nom vernaculaire du taxon</label>
+                    <input type="text" class="form-control" id="inputNomVern" ng-model="ctrl.newTaxon.nom_vern">
                 </div>
 
                 <div class="form-group"> <!-- nom_vern_eng -->
-                    <label for="inputNom">Nom vern eng du taxon</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputNomVernEng">Nom vernaculaire anglais du taxon</label>
+                    <input type="text" class="form-control" id="inputNomVernEng" ng-model="ctrl.newTaxon.nom_vern_eng">
                 </div>
 
                 <div class="form-group"> <!-- id_statut -->
-                    <label for="inputNom">Statut</label> <!-- Choix dans une liste à générer par requête à la bb -->
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputStatut">Statut</label> <!-- Choix dans une liste à générer par requête à la bb -->
+                    <input type="text" class="form-control" id="inputStatut" ng-model="ctrl.newTaxon.id_statut">
                 </div>
 
                 <div class="form-group"> <!-- id_habitat -->
-                    <label for="inputNom">Habitat</label> <!-- Choix dans une liste à générer par requête à la bb -->
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputHabitat">Habitat</label> <!-- Choix dans une liste à générer par requête à la bb -->
+                    <input type="text" class="form-control" id="inputHabitat" ng-model="ctrl.newTaxon.id_habitat">
                 </div>
 
                 <div class="form-group"> <!-- id_rang -->
-                    <label for="inputNom">Rang</label> <!-- Choix dans une liste à générer par requête à la bb -->
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputRang">Rang</label> <!-- Choix dans une liste à générer par requête à la bb -->
+                    <input type="text" class="form-control" id="inputRang" ng-model="ctrl.newTaxon.id_rang">
                 </div>
 
                 <div class="form-group"> <!-- regne -->
-                    <label for="inputNom">Règne</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputRegne">Règne</label>
+                    <input type="text" class="form-control" id="inputRegne" ng-model="ctrl.newTaxon.regne">
                 </div>
 
                 <div class="form-group"> <!-- phylum -->
-                    <label for="inputNom">Phylum</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputPhylum">Phylum</label>
+                    <input type="text" class="form-control" id="inputPhylum" ng-model="ctrl.newTaxon.phylum">
                 </div>
 
                 <div class="form-group"> <!-- classe -->
-                    <label for="inputNom">Classe</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputClasse">Classe</label>
+                    <input type="text" class="form-control" id="inputClasse" ng-model="ctrl.newTaxon.classe">
                 </div>
 
                 <div class="form-group"> <!-- ordre -->
-                    <label for="inputNom">Ordre</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputOrdre">Ordre</label>
+                    <input type="text" class="form-control" id="inputOrdre" ng-model="ctrl.newTaxon.ordre">
                 </div>
 
                 <div class="form-group"> <!-- famille -->
-                    <label for="inputNom">Famille</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputFamille">Famille</label>
+                    <input type="text" class="form-control" id="inputFamille" ng-model="ctrl.newTaxon.famille">
                 </div>
 
                 <div class="form-group"> <!-- sous_famille -->
-                    <label for="inputNom">Sous famille</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputSousFamille">Sous-famille</label>
+                    <input type="text" class="form-control" id="inputSousFamille" ng-model="ctrl.newTaxon.sous_famille">
                 </div>
 
                 <div class="form-group"> <!-- tribu -->
-                    <label for="inputNom">Tribu</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputTribu">Tribu</label>
+                    <input type="text" class="form-control" id="inputTribu" ng-model="ctrl.newTaxon.tribu">
                 </div>
 
                 <div class="form-group"> <!-- group1_inpn -->
-                    <label for="inputNom">Groupe INPN 1</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputGroup1Inpn">Groupe INPN 1</label>
+                    <input type="text" class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn">
                 </div>
 
                 <div class="form-group"> <!-- group2_inpn -->
-                    <label for="inputNom">Groupe INPN 2</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputGroup2Inpn">Groupe INPN 2</label>
+                    <input type="text" class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn">
                 </div>
 
                 <div class="form-group"> <!-- group3_inpn -->
-                    <label for="inputNom">Groupe INPN 3</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputGroup3Inpn">Groupe INPN 3</label>
+                    <input type="text" class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn">
                 </div>
 
                 <div class="form-group"> <!-- cd_taxsup -->
-                    <label for="inputNom">cd_taxsup</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputCdTaxsup">cd_taxsup</label>
+                    <input type="text" class="form-control" id="inputCdTaxsup" ng-model="ctrl.newTaxon.cd_taxsup">
                 </div>
 
                 <div class="form-group"> <!-- cd_sup -->
-                    <label for="inputNom">cd_sup</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputCdSup">cd_sup</label>
+                    <input type="text" class="form-control" id="inputCdSup" ng-model="ctrl.newTaxon.cd_sup">
                 </div>
 
                 <div class="form-group"> <!-- url -->
-                    <label for="inputNom">URL</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputUrl">URL</label>
+                    <input type="text" class="form-control" id="inputUrl" ng-model="ctrl.newTaxon.url">
                 </div>
 
                 <div class="form-group"> <!-- lb_auteur -->
-                    <label for="inputNom">Nom du l'auteur de cet ajout</label>
-                    <input type="text" class="form-control" id="inputNom" ng-model="ctrl.newTaxon.nom" required>
+                    <label for="inputAuteur">Nom de l'auteur de cet ajout</label>
+                    <input type="text" class="form-control" id="inputAuteur" ng-model="ctrl.newTaxon.lb_auteur">
                 </div>
 
                 <!-- Bouton pour soumettre le formulaire -->
@@ -145,5 +141,3 @@
         </div>
     </div>
 </div>
-
-
