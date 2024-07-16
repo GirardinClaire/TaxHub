@@ -7,7 +7,7 @@ app.controller('addTaxonCtrl', ['$scope', '$http', 'backendCfg',
         // self.route = 'addTaxon'; // Définis la route correspondante à cette page
 
         //----------------------Gestion des droits---------------//
-        self.userRights = loginSrv.getCurrentUserRights();
+        // self.userRights = loginSrv.getCurrentUserRights();
 
         // // Exemple de fonction pour ajouter un taxon
         // self.addTaxon = function(taxonData) {
