@@ -83,77 +83,11 @@
                 <div class="form-group"> <!-- group3_inpn -->
                     <label for="inputGroup3Inpn">Groupe INPN 3</label> <!-- Choix dans une liste à générer par requête à la bb -->
                     <input type="text" class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn">
-
-                <!--
-                <div class="form-group" tooltip="Définir le règne">
-                    <label for="inputRegne">Règne</label>
-                    <input type="text"
-                        placeholder="Règne" ng-model="taxHierarchieSelectedKD"
-                        typeahead-editable="false"
-                        add-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/'
-                        uib-typeahead="tax as ( tax.regne  + ' ' +  tax.nb_tx_kd ) for tax in getTaxonHierarchie('KD', $viewValue, taxHierarchieSelected)"
-                        typeahead-on-select="onSelect($item, $model, $label)"
-                        class="form-control"/>
                 </div>
 
-                <div class="form-group" tooltip="Définir le phylum">
-                    <label for="inputPhylum">Phylum</label>
-                    <input type="text"
-                        placeholder="Phylum" ng-model="taxHierarchieSelectedPH"
-                        typeahead-editable="false"
-                        add-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/'
-                        uib-typeahead="tax as ( tax.phylum  + ' ' +  tax.nb_tx_ph ) for tax in getTaxonHierarchie('PH', $viewValue, taxHierarchieSelected)"
-                        typeahead-on-select="onSelect($item, $model, $label)"
-                        class="form-control">
-                </div>
-                
-                <div class="form-group" tooltip="Définir la classe">
-                    <label for="inputClasse">Classe</label>
-                    <input type="text"
-                        placeholder="Classe" ng-model="taxHierarchieSelectedCL"
-                        typeahead-editable="false"
-                        add-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/'
-                        uib-typeahead="tax as ( tax.classe  + ' ' +  tax.nb_tx_cl ) for tax in getTaxonHierarchie('CL', $viewValue, taxHierarchieSelected)"
-                        typeahead-on-select="onSelect($item, $model, $label)"
-                        class="form-control">
-                </div>
-
-                <div class="form-group" tooltip="Définir l'ordre">
-                    <label for="inputOrdre">Ordre</label>
-                    <input type="text"
-                        placeholder="Ordre" ng-model="taxHierarchieSelectedOR"
-                        typeahead-editable="false"
-                        add-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/'
-                        uib-typeahead="tax as ( tax.ordre  + ' ' +  tax.nb_tx_or ) for tax in getTaxonHierarchie('OR', $viewValue, taxHierarchieSelected)"
-                        typeahead-on-select="onSelect($item, $model, $label)"
-                        class="form-control">
-                </div>
-
-                <div class="form-group" tooltip="Définir la famille">
-                    <label for="inputFamille">Famille</label>
-                    <input type="text"
-                        placeholder="Famille" ng-model="taxHierarchieSelectedFM"
-                        typeahead-editable="false"
-                        add-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/'
-                        uib-typeahead="tax as (tax.famille + ' ' + tax.nb_tx_fm ) for tax in getTaxonHierarchie('FM', $viewValue, taxHierarchieSelected)"
-                        typeahead-on-select="onSelect($item, $model, $label)"
-                        class="form-control"/>
-                </div>
-                -->
-
-                <div class="row ">
-                    <search-hierachie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/' />
-                  </div>
-
-                <div class="form-group"> <!-- sous_famille -->
-                    <label for="inputSousFamille">Sous-famille</label> <!-- Autocomplétions -->
-                    <input type="text" class="form-control" id="inputSousFamille" ng-model="ctrl.newTaxon.sous_famille">
-                </div>
-
-
-                <div class="form-group"> <!-- tribu -->
-                    <label for="inputTribu">Tribu</label> <!-- Autocomplétions -->
-                    <input type="text" class="form-control" id="inputTribu" ng-model="ctrl.newTaxon.tribu">
+                <!-- Tous les champs en autocomplétions : regne, phylum, classe, ordre, famille, sous_famille, tribu -->
+                <div class="form-group">
+                <add-hierarchie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/' />
                 </div>
 
                 <!-- Bouton pour soumettre le formulaire -->
