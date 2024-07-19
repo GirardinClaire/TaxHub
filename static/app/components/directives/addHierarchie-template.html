@@ -57,9 +57,9 @@
   <label for="addSousFamille">Sous-famille</label> <!-- Autocomplétions A FAIRE-->
   <input type="text"
     id="addSousFamille"
-    placeholder="Sous-famille" ng-model="taxHierarchieSelectedSFM"
+    placeholder="Sous-famille" ng-model="taxHierarchieSelectedSBFM"
     typeahead-editable="false"
-    uib-typeahead="tax as (tax.sousfamille + ' ' + tax.nb_tx_sfm ) for tax in getTaxonHierarchie('SFM', $viewValue, taxHierarchieSelected)"
+    uib-typeahead="tax as (tax.sousfamille + ' ' + tax.nb_tx_sfm ) for tax in getTaxonHierarchie('SBFM', $viewValue, taxHierarchieSelected)"
     typeahead-on-select="onSelect($item, $model, $label)"
     class="form-control"/>
 </div>

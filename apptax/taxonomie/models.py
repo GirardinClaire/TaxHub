@@ -297,8 +297,12 @@ class VMTaxrefHierarchie(db.Model):
     classe = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
+    sous_famille = db.Column(db.Unicode)
+    tribu = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
     id_rang = db.Column(db.Unicode)
+    nb_tx_tr = db.Column(db.Integer)
+    nb_tx_sbfm = db.Column(db.Integer)
     nb_tx_fm = db.Column(db.Integer)
     nb_tx_or = db.Column(db.Integer)
     nb_tx_cl = db.Column(db.Integer)
@@ -328,7 +332,7 @@ class VTaxrefHierarchieBibtaxons(db.Model):
     nb_tx_kd = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"<VMTaxrefHierarchie {self.lb_nom}>"
+        return f"<VTaxrefHierarchieBibtaxons {self.lb_nom}>"
 
 
 @serializable
