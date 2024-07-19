@@ -61,6 +61,12 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http,backen
 
             if ((model.ordre) && ((rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
               queryparam.params.ordre = model.ordre.trim();
+
+            if ((model.famille) && ((rang !=='FM') && (rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
+              queryparam.params.famille = model.famille.trim();
+
+            if ((model.sousfamille) && ((rang !=='SFM') && (rang !=='FM') && (rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
+              queryparam.params.sousfamille = model.sousfamille.trim();
         }
         return $http.get(backendCfg.api_url+this.searchUrl+rang, queryparam).then(function(response){
           return response.data;
