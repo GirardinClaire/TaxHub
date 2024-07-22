@@ -2,9 +2,29 @@ app.controller('addTaxonCtrl', ['$scope', '$http', 'backendCfg',
     function($scope, $http, backendCfg) {
 
         //--------------------- Valeurs par défaut ------------------------------------
-        var self = this;
-        self.route='addTaxon';
-        
+        var ctrl = this;
+        ctrl.route='addTaxon';
+        ctrl.newTaxon = { // Initialisation de newTaxon
+            lb_nom: '',
+            lb_auteur: '',
+            nom_complet: '',
+            nom_valide: '',
+            nom_vern: '',
+            nom_vern_eng: '',
+            url: '',
+        };
+
+
+        //--------------------- Fonctions ------------------------------------
+
+        // Watchers pour lb_nom et lb_auteur
+        $scope.$watchGroup(['ctrl.newTaxon.lb_nom', 'ctrl.newTaxon.lb_auteur'], function(newValues) {
+            var lb_nom = newValues[0] || '';
+            var lb_auteur = newValues[1] || '';
+            ctrl.newTaxon.nom_complet = lb_nom + ' ' + lb_auteur;
+        });
+
+
         // Gestion des droits
         // self.userRights = loginSrv.getCurrentUserRights();
 
