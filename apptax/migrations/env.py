@@ -22,6 +22,11 @@ logger = logging.getLogger("alembic.env")
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from flask import current_app
+# from apptax.app import create_app  # Import your create_app function
+
+# # Create the Flask app and push the context
+# app = create_app()
+# app.app_context().push()
 
 config.set_main_option(
     "sqlalchemy.url", str(current_app.extensions["migrate"].db.engine.url).replace("%", "%%")

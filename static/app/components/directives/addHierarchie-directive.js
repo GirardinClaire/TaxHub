@@ -30,9 +30,9 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http,backen
             $scope.taxHierarchieSelectedFM = {'famille': $scope.taxHierarchieSelected.famille, 'nb_tx_fm': $scope.taxHierarchieSelected.nb_tx_fm };
           else $scope.taxHierarchieSelectedFM = undefined;
 
-          if ($scope.taxHierarchieSelected.sousfamille)
-            $scope.taxHierarchieSelectedSFM = {'sousfamille': $scope.taxHierarchieSelected.sousfamille, 'nb_tx_sfm': $scope.taxHierarchieSelected.nb_tx_sfm };
-          else $scope.taxHierarchieSelectedSFM = undefined;
+          if ($scope.taxHierarchieSelected.sous_famille)
+            $scope.taxHierarchieSelectedSBFM = {'sous_famille': $scope.taxHierarchieSelected.sous_famille, 'nb_tx_sbfm': $scope.taxHierarchieSelected.nb_tx_sbfm };
+          else $scope.taxHierarchieSelectedSBFM = undefined;
 
           if ($scope.taxHierarchieSelected.tribu)
             $scope.taxHierarchieSelectedTR = {'tribu': $scope.taxHierarchieSelected.tribu, 'nb_tx_tr': $scope.taxHierarchieSelected.nb_tx_tr };
@@ -65,8 +65,8 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http,backen
             if ((model.famille) && ((rang !=='FM') && (rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
               queryparam.params.famille = model.famille.trim();
 
-            if ((model.sousfamille) && ((rang !=='SFM') && (rang !=='FM') && (rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
-              queryparam.params.sousfamille = model.sousfamille.trim();
+            if ((model.sous_famille) && ((rang !=='SBFM') && (rang !=='FM') && (rang !=='OR') && (rang !=='CL') && (rang !=='PH') && (rang !=='KD')))
+              queryparam.params.sous_famille = model.sous_famille.trim();
         }
         return $http.get(backendCfg.api_url+this.searchUrl+rang, queryparam).then(function(response){
           return response.data;

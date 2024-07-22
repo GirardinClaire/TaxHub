@@ -59,7 +59,7 @@
     id="addSousFamille"
     placeholder="Sous-famille" ng-model="taxHierarchieSelectedSBFM"
     typeahead-editable="false"
-    uib-typeahead="tax as (tax.sousfamille + ' ' + tax.nb_tx_sfm ) for tax in getTaxonHierarchie('SBFM', $viewValue, taxHierarchieSelected)"
+    uib-typeahead="tax as (tax.sous_famille + ' ' + tax.nb_tx_sbfm ) for tax in getTaxonHierarchie('SBFM', $viewValue, taxHierarchieSelected)"
     typeahead-on-select="onSelect($item, $model, $label)"
     class="form-control"/>
 </div>
