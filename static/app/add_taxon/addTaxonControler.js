@@ -12,6 +12,9 @@ app.controller('addTaxonCtrl', ['$scope', '$http', 'backendCfg',
             nom_vern: '',
             nom_vern_eng: '',
             url: '',
+            group1_inpn: null,
+            group2_inpn: null,
+            group3_inpn: null
         };
 
 
