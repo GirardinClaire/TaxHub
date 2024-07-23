@@ -366,10 +366,11 @@ def get_id_nom_statuts():
     Retourne un dictionnaire contenant la liste des id des statuts  et leur nom associé
     """
     data = (
-        db.session.query(BibTaxrefStatus.id_statut, BibTaxrefStatus.nom_statut)
-        .distinct(BibTaxrefStatus.id_statut)
+        db.session.query(BibTaxrefStatus.id_statut, BibTaxrefStatus.nom_statut).distinct(
+            BibTaxrefStatus.id_statut
+        )
     ).all()
-    return [{ 'id_statut': id_statut, 'nom_statut': nom_statut } for id_statut, nom_statut in data]
+    return [{"id_statut": id_statut, "nom_statut": nom_statut} for id_statut, nom_statut in data]
 
 
 @adresses.route("/idNomHabitats", methods=["GET"])
@@ -379,10 +380,13 @@ def get_id_nom_habitats():
     Retourne un dictionnaire contenant la liste des id des habitats  et leur nom associé
     """
     data = (
-        db.session.query(BibTaxrefHabitats.id_habitat, BibTaxrefHabitats.nom_habitat)
-        .distinct(BibTaxrefHabitats.id_habitat)
+        db.session.query(BibTaxrefHabitats.id_habitat, BibTaxrefHabitats.nom_habitat).distinct(
+            BibTaxrefHabitats.id_habitat
+        )
     ).all()
-    return [{ 'id_habitat': id_habitat, 'nom_habitat': nom_habitat } for id_habitat, nom_habitat in data]
+    return [
+        {"id_habitat": id_habitat, "nom_habitat": nom_habitat} for id_habitat, nom_habitat in data
+    ]
 
 
 @adresses.route("/idNomRangs", methods=["GET"])
@@ -392,10 +396,11 @@ def get_id_nom_rangs():
     Retourne un dictionnaire contenant la liste des id des rangs et leur nom associé
     """
     data = (
-        db.session.query(BibTaxrefRangs.id_rang, BibTaxrefRangs.nom_rang)
-        .distinct(BibTaxrefRangs.id_rang)
+        db.session.query(BibTaxrefRangs.id_rang, BibTaxrefRangs.nom_rang).distinct(
+            BibTaxrefRangs.id_rang
+        )
     ).all()
-    return [{ 'id_rang': id_rang, 'nom_rang': nom_rang } for id_rang, nom_rang in data]
+    return [{"id_rang": id_rang, "nom_rang": nom_rang} for id_rang, nom_rang in data]
 
 
 @adresses.route("/groupe1_inpn", methods=["GET"])

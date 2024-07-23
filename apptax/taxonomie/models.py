@@ -298,12 +298,12 @@ class VMTaxrefHierarchie(db.Model):
     classe = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
-    sous_famille = db.Column(db.Unicode) # attribut ajouté pour autocomplétion addTaxon
-    tribu = db.Column(db.Unicode) # attribut ajouté pour autocomplétion addTaxon
+    sous_famille = db.Column(db.Unicode)  # attribut ajouté pour autocomplétion addTaxon
+    tribu = db.Column(db.Unicode)  # attribut ajouté pour autocomplétion addTaxon
     lb_nom = db.Column(db.Unicode)
     id_rang = db.Column(db.Unicode)
-    nb_tx_tr = db.Column(db.Integer) # attribut ajouté pour autocomplétion addTaxon
-    nb_tx_sbfm = db.Column(db.Integer) # attribut ajouté pour autocomplétion addTaxon
+    nb_tx_tr = db.Column(db.Integer)  # attribut ajouté pour autocomplétion addTaxon
+    nb_tx_sbfm = db.Column(db.Integer)  # attribut ajouté pour autocomplétion addTaxon
     nb_tx_fm = db.Column(db.Integer)
     nb_tx_or = db.Column(db.Integer)
     nb_tx_cl = db.Column(db.Integer)

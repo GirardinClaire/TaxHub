@@ -22,6 +22,7 @@ logger = logging.getLogger("alembic.env")
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from flask import current_app
+
 # from apptax.app import create_app  # Import your create_app function
 
 # # Create the Flask app and push the context
