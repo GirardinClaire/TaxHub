@@ -15,7 +15,6 @@ from .models import (
     BibTaxrefStatus,
     VMTaxrefHierarchie,
     VTaxrefHierarchieBibtaxons,
-    BibTaxrefHabitats,
     CorNomListe,
     BibListes,
     TMetaTaxref,
@@ -360,9 +359,48 @@ def get_regneGroup2Inpn_taxref():
     return results
 
 
+@adresses.route("/idNomStatuts", methods=["GET"])
+@json_resp
+def get_id_nom_statuts():
+    """
+    Retourne un dictionnaire contenant la liste des id des statuts  et leur nom associé
+    """
+    data = (
+        db.session.query(BibTaxrefStatus.id_statut, BibTaxrefStatus.nom_statut)
+        .distinct(BibTaxrefStatus.id_statut)
+    ).all()
+    return [{ 'id_statut': id_statut, 'nom_statut': nom_statut } for id_statut, nom_statut in data]
+
+
+@adresses.route("/idNomHabitats", methods=["GET"])
+@json_resp
+def get_id_nom_habitats():
+    """
+    Retourne un dictionnaire contenant la liste des id des habitats  et leur nom associé
+    """
+    data = (
+        db.session.query(BibTaxrefHabitats.id_habitat, BibTaxrefHabitats.nom_habitat)
+        .distinct(BibTaxrefHabitats.id_habitat)
+    ).all()
+    return [{ 'id_habitat': id_habitat, 'nom_habitat': nom_habitat } for id_habitat, nom_habitat in data]
+
+
+@adresses.route("/idNomRangs", methods=["GET"])
+@json_resp
+def get_id_nom_rangs():
+    """
+    Retourne un dictionnaire contenant la liste des id des rangs et leur nom associé
+    """
+    data = (
+        db.session.query(BibTaxrefRangs.id_rang, BibTaxrefRangs.nom_rang)
+        .distinct(BibTaxrefRangs.id_rang)
+    ).all()
+    return [{ 'id_rang': id_rang, 'nom_rang': nom_rang } for id_rang, nom_rang in data]
+
+
 @adresses.route("/groupe1_inpn", methods=["GET"])
 @json_resp
-def get_group3_inpn_taxref():
+def get_group1_inpn_taxref():
     """
     Retourne la liste des groupes 1 inpn
     """
@@ -376,7 +414,7 @@ def get_group3_inpn_taxref():
 
 @adresses.route("/groupe2_inpn", methods=["GET"])
 @json_resp
-def get_group3_inpn_taxref():
+def get_group2_inpn_taxref():
     """
     Retourne la liste des groupes 2 inpn
     """

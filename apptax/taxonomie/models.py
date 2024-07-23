@@ -269,6 +269,7 @@ class BibTaxrefRangs(db.Model):
     __table_args__ = {"schema": "taxonomie"}
     id_rang = db.Column(db.Integer, primary_key=True)
     nom_rang = db.Column(db.Unicode)
+    nom_rang_en = db.Column(db.Unicode)
     tri_rang = db.Column(db.Integer)
 
     def __repr__(self):
