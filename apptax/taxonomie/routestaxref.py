@@ -363,13 +363,17 @@ def get_regneGroup2Inpn_taxref():
 @json_resp
 def get_id_nom_statuts():
     """
-    Retourne un dictionnaire contenant la liste des id des statuts  et leur nom associé
+    Retourne un dictionnaire contenant la liste des id des statuts et leur nom associé,
+    trié par ordre alphabétique sur les noms.
     """
-    data = (
+    subquery = (
         db.session.query(BibTaxrefStatus.id_statut, BibTaxrefStatus.nom_statut).distinct(
             BibTaxrefStatus.id_statut
         )
-    ).all()
+    ).subquery()
+
+    data = db.session.query(subquery).order_by(subquery.c.nom_statut.asc()).all()
+
     return [{"id_statut": id_statut, "nom_statut": nom_statut} for id_statut, nom_statut in data]
 
 
@@ -377,13 +381,17 @@ def get_id_nom_statuts():
 @json_resp
 def get_id_nom_habitats():
     """
-    Retourne un dictionnaire contenant la liste des id des habitats  et leur nom associé
+    Retourne un dictionnaire contenant la liste des id des habitats et leur nom associé,
+    trié par ordre alphabétique sur les noms.
     """
-    data = (
+    subquery = (
         db.session.query(BibTaxrefHabitats.id_habitat, BibTaxrefHabitats.nom_habitat).distinct(
             BibTaxrefHabitats.id_habitat
         )
-    ).all()
+    ).subquery()
+
+    data = db.session.query(subquery).order_by(subquery.c.nom_habitat.asc()).all()
+
     return [
         {"id_habitat": id_habitat, "nom_habitat": nom_habitat} for id_habitat, nom_habitat in data
     ]
@@ -393,13 +401,17 @@ def get_id_nom_habitats():
 @json_resp
 def get_id_nom_rangs():
     """
-    Retourne un dictionnaire contenant la liste des id des rangs et leur nom associé
+    Retourne un dictionnaire contenant la liste des id des rangs et leur nom associé,
+    trié par ordre alphabétique sur les noms.
     """
-    data = (
+    subquery = (
         db.session.query(BibTaxrefRangs.id_rang, BibTaxrefRangs.nom_rang).distinct(
             BibTaxrefRangs.id_rang
         )
-    ).all()
+    ).subquery()
+
+    data = db.session.query(subquery).order_by(subquery.c.nom_rang.asc()).all()
+
     return [{"id_rang": id_rang, "nom_rang": nom_rang} for id_rang, nom_rang in data]
 
 

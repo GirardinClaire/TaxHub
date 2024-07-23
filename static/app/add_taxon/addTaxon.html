@@ -21,9 +21,9 @@
                 <!-- Les différents champs du formulaire -->
 
                 <div class="form-group"> <!-- lb_nom -->
-                    <label for="inputNom">Nom du taxon</label>
+                    <label for="inputNom">Nom du taxon</label> 
                     <input type="text" class="form-control" placeholder="Nom du taxon"
-                    id="inputNom" ng-model="ctrl.newTaxon.lb_nom" required>
+                    id="inputNom" ng-model="ctrl.newTaxon.lb_nom" required> <!-- Champs obligatoire -->
                 </div>
 
                 <div class="form-group"> <!-- lb_auteur -->
@@ -62,42 +62,48 @@
                     id="inputUrl" ng-model="ctrl.newTaxon.url">
                 </div>
 
-                <div class="form-group"> <!-- id_statut -->
+                <div class="form-group"> <!-- statut -->
                     <label for="inputStatut">Statut</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputStatut" ng-model="ctrl.newTaxon.id_statut">
+                    <select class="form-control" id="inputStatut" ng-model="ctrl.newTaxon.statut"
+                        ng-options="statut.statut as statut.nom_statut for statut in ctrl.statuts" required> <!-- Champs obligatoire -->
+                    </select>
                 </div>
 
-                <div class="form-group"> <!-- id_habitat -->
+                <div class="form-group"> <!-- habitat -->
                     <label for="inputHabitat">Habitat</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputHabitat" ng-model="ctrl.newTaxon.id_habitat">
+                    <select class="form-control" id="inputHabitat" ng-model="ctrl.newTaxon.habitat"
+                        ng-options="habitat.habitat as habitat.nom_habitat for habitat in ctrl.habitats" required> <!-- Champs obligatoire -->
+                    </select>
                 </div>
 
-                <div class="form-group"> <!-- id_rang -->
+                <div class="form-group"> <!-- rang -->
                     <label for="inputRang">Rang</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputRang" ng-model="ctrl.newTaxon.id_rang" required>
+                    <select class="form-control" id="inputRang" ng-model="ctrl.newTaxon.rang"
+                        ng-options="rang.rang as rang.nom_rang for rang in ctrl.rangs" required> <!-- Champs obligatoire -->
+                    </select>
                 </div>
-
+            
                 <div class="form-group"> <!-- group1_inpn -->
                     <label for="inputGroup1Inpn">Groupe INPN 1</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn">
+                    <select class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn"
+                        ng-options="group for group in ctrl.group1Inpn">
+                    </select>
                 </div>
-
+            
                 <div class="form-group"> <!-- group2_inpn -->
                     <label for="inputGroup2Inpn">Groupe INPN 2</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn">
+                    <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
+                        ng-options="group for group in ctrl.group2Inpn">
+                    </select>
                 </div>
-
+            
                 <div class="form-group"> <!-- group3_inpn -->
                     <label for="inputGroup3Inpn">Groupe INPN 3</label> <!-- Choix dans une liste -->
-                    <input type="text" class="form-control" placeholder=""
-                    id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn">
+                    <select class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn"
+                        ng-options="group for group in ctrl.group3Inpn">
+                    </select>
                 </div>
-
+            
                 <!-- Tous les champs en autocomplétions : regne, phylum, classe, ordre, famille, sous_famille, tribu -->
                 <div class="form-group">
                 <add-hierarchie-dir tax-hierarchie-selected = "ctrl.filters.hierarchy" search-url='taxref/hierarchie/' />

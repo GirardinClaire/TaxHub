@@ -1,4 +1,4 @@
-app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http,backendCfg) {
+app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http, backendCfg) {
   return {
     restrict: 'AE',
     templateUrl:'static/app/components/directives/addHierarchie-template.html',
