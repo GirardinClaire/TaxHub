@@ -421,11 +421,7 @@ def get_group1_inpn_taxref():
     """
     Retourne la liste des groupes 1 inpn
     """
-    data = (
-        db.session.query(Taxref.group1_inpn)
-        .distinct(Taxref.group1_inpn)
-        .filter(Taxref.group1_inpn != None)
-    ).all()
+    data = (db.session.query(Taxref.group1_inpn).distinct(Taxref.group1_inpn)).all()
     return [d[0] for d in data]
 
 
@@ -435,11 +431,7 @@ def get_group2_inpn_taxref():
     """
     Retourne la liste des groupes 2 inpn
     """
-    data = (
-        db.session.query(Taxref.group2_inpn)
-        .distinct(Taxref.group2_inpn)
-        .filter(Taxref.group2_inpn != None)
-    ).all()
+    data = (db.session.query(Taxref.group2_inpn).distinct(Taxref.group2_inpn)).all()
     return [d[0] for d in data]
 
 

@@ -65,21 +65,21 @@
                 <div class="form-group"> <!-- statut -->
                     <label for="inputStatut">Statut</label> <!-- Choix dans une liste -->
                     <select class="form-control" id="inputStatut" ng-model="ctrl.newTaxon.statut"
-                        ng-options="statut.statut as statut.nom_statut for statut in ctrl.statuts" required> <!-- Champs obligatoire -->
+                        ng-options="statut.nom_statut for statut in ctrl.statuts" required> <!-- Champs obligatoire -->
                     </select>
                 </div>
 
                 <div class="form-group"> <!-- habitat -->
                     <label for="inputHabitat">Habitat</label> <!-- Choix dans une liste -->
                     <select class="form-control" id="inputHabitat" ng-model="ctrl.newTaxon.habitat"
-                        ng-options="habitat.habitat as habitat.nom_habitat for habitat in ctrl.habitats" required> <!-- Champs obligatoire -->
+                        ng-options="habitat.nom_habitat for habitat in ctrl.habitats" required> <!-- Champs obligatoire -->
                     </select>
                 </div>
 
                 <div class="form-group"> <!-- rang -->
                     <label for="inputRang">Rang</label> <!-- Choix dans une liste -->
                     <select class="form-control" id="inputRang" ng-model="ctrl.newTaxon.rang"
-                        ng-options="rang.rang as rang.nom_rang for rang in ctrl.rangs" required> <!-- Champs obligatoire -->
+                        ng-options="rang.nom_rang for rang in ctrl.rangs" required> <!-- Champs obligatoire -->
                     </select>
                 </div>
             
