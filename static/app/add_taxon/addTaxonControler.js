@@ -22,13 +22,13 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 
         // Initialisation de newTaxon avec les valeurs par défaut
         ctrl.newTaxon = {
-            lb_nom: '',
-            lb_auteur: '',
-            nom_complet: '',
-            nom_valide: '',
-            nom_vern: '',
-            nom_vern_eng: '',
-            url: '',
+            lb_nom: null,
+            lb_auteur: null,
+            nom_complet: null,
+            nom_valide: null,
+            nom_vern: null,
+            nom_vern_eng: null,
+            url: null,
 
             statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé'),
             id_statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé').id_statut,
@@ -41,14 +41,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
             group1_inpn: null,
             group2_inpn: null,
             group3_inpn: null,
-
-            regne: '',
-            phylum: '',
-            classe: '',
-            ordre: '',
-            famille: '',
-            sous_famille: '',
-            tribu: ''
         };
 
         // Appliquer les changements dans $scope
@@ -58,7 +50,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
     });
 
 
-    //--------------------- Fonctions ------------------------------------
+    //--------------------- Fonctions utiles ------------------------------------
 
     // Watchers pour lb_nom et lb_auteur afin de remplir nom_complet automatiquement
     $scope.$watchGroup(['ctrl.newTaxon.lb_nom', 'ctrl.newTaxon.lb_auteur'], function(newValues) {
@@ -74,17 +66,30 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 
 
 
-    // Ajouter un nouveau taxon
+
+    //--------------------- Ajout d'un nouveau taxon ------------------------------------
+
     ctrl.addTaxon = function(newTaxon) {
 
         // Convertir respectivement statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;
         newTaxon.id_habitat = newTaxon.habitat.id_habitat;
         newTaxon.id_rang = newTaxon.rang.id_rang;
+
+        // Récupérer les rangs taxonomiques choisis
+        newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? null;
+        newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? null;
+        newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? null;
+        newTaxon.ordre = newTaxon.rangTaxonomique?.ordre ?? null;
+        newTaxon.famille = newTaxon.rangTaxonomique?.famille ?? null;
+        newTaxon.sous_famille = newTaxon.rangTaxonomique?.sous_famille ?? null;
+        newTaxon.tribu = newTaxon.rangTaxonomique?.tribu ?? null;
+
         // Nettoyage des propriétés inutilisées
         delete newTaxon.statut;
         delete newTaxon.habitat;
         delete newTaxon.rang;
+        delete newTaxon.rangTaxonomique;
 
 // faire une erreur si rang == '' : il faut à tout pris choisir quelque chose
 

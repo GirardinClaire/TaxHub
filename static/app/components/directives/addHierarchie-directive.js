@@ -11,32 +11,32 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http, backe
       $scope.$watch('taxHierarchieSelected', function(newVal, oldVal) {
         if ($scope.taxHierarchieSelected) {
           if ($scope.taxHierarchieSelected.regne)
-            $scope.taxHierarchieSelectedKD = {'regne': $scope.taxHierarchieSelected.regne, 'nb_tx_kd': $scope.taxHierarchieSelected.nb_tx_kd };
-          else $scope.taxHierarchieSelectedKD = undefined;
+            $scope.regne = {'regne': $scope.taxHierarchieSelected.regne, 'nb_tx_kd': $scope.taxHierarchieSelected.nb_tx_kd };
+          else $scope.regne = undefined;
 
           if ($scope.taxHierarchieSelected.phylum)
-            $scope.taxHierarchieSelectedPH = {'phylum': $scope.taxHierarchieSelected.phylum, 'nb_tx_ph': $scope.taxHierarchieSelected.nb_tx_ph };
-          else $scope.taxHierarchieSelectedPH = undefined;
+            $scope.phylum = {'phylum': $scope.taxHierarchieSelected.phylum, 'nb_tx_ph': $scope.taxHierarchieSelected.nb_tx_ph };
+          else $scope.phylum = undefined;
 
           if ($scope.taxHierarchieSelected.classe)
-            $scope.taxHierarchieSelectedCL = {'classe': $scope.taxHierarchieSelected.classe, 'nb_tx_cl': $scope.taxHierarchieSelected.nb_tx_cl };
-          else $scope.taxHierarchieSelectedCL = undefined;
+            $scope.classe = {'classe': $scope.taxHierarchieSelected.classe, 'nb_tx_cl': $scope.taxHierarchieSelected.nb_tx_cl };
+          else $scope.classe = undefined;
 
           if ($scope.taxHierarchieSelected.ordre)
-            $scope.taxHierarchieSelectedOR = {'ordre': $scope.taxHierarchieSelected.ordre, 'nb_tx_or': $scope.taxHierarchieSelected.nb_tx_or };
-          else $scope.taxHierarchieSelectedOR = undefined;
+            $scope.ordre = {'ordre': $scope.taxHierarchieSelected.ordre, 'nb_tx_or': $scope.taxHierarchieSelected.nb_tx_or };
+          else $scope.ordre = undefined;
 
           if ($scope.taxHierarchieSelected.famille)
-            $scope.taxHierarchieSelectedFM = {'famille': $scope.taxHierarchieSelected.famille, 'nb_tx_fm': $scope.taxHierarchieSelected.nb_tx_fm };
-          else $scope.taxHierarchieSelectedFM = undefined;
+            $scope.famille = {'famille': $scope.taxHierarchieSelected.famille, 'nb_tx_fm': $scope.taxHierarchieSelected.nb_tx_fm };
+          else $scope.famille = undefined;
 
           if ($scope.taxHierarchieSelected.sous_famille)
-            $scope.taxHierarchieSelectedSBFM = {'sous_famille': $scope.taxHierarchieSelected.sous_famille, 'nb_tx_sbfm': $scope.taxHierarchieSelected.nb_tx_sbfm };
-          else $scope.taxHierarchieSelectedSBFM = undefined;
+            $scope.sous_famille = {'sous_famille': $scope.taxHierarchieSelected.sous_famille, 'nb_tx_sbfm': $scope.taxHierarchieSelected.nb_tx_sbfm };
+          else $scope.sous_famille = undefined;
 
           if ($scope.taxHierarchieSelected.tribu)
-            $scope.taxHierarchieSelectedTR = {'tribu': $scope.taxHierarchieSelected.tribu, 'nb_tx_tr': $scope.taxHierarchieSelected.nb_tx_tr };
-          else $scope.taxHierarchieSelectedTR = undefined;
+            $scope.tribu = {'tribu': $scope.taxHierarchieSelected.tribu, 'nb_tx_tr': $scope.taxHierarchieSelected.nb_tx_tr };
+          else $scope.tribu = undefined;
         }
       }, true);
 
