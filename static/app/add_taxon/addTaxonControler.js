@@ -74,12 +74,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
     };
 
-    // Suppression de la saisie d'un rang taxonomique ou de tous les rangs
-    ctrl.refreshForm = function(nomRang, $event) {
-        console.log("Button clicked: " + nomRang);
-    };
-
-
 
 //--------------------- Ajout d'un nouveau taxon ------------------------------------
 

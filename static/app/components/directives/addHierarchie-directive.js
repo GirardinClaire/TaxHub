@@ -72,6 +72,16 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http, backe
           return response.data;
         });
       };
+
+      // Vider la sélection des rang taxonomiques 
+      $scope.refreshForm = function() {
+        if (($scope.taxHierarchieSelected === undefined) || ($scope.taxHierarchieSelected === '=')) {
+          alert("La hiérarchie taxonomique est déjà vide.");
+        } else {
+          $scope.taxHierarchieSelected = '=';
+        }
+      };
+
     }
   }
 }]);
