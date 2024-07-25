@@ -52,6 +52,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
     });
 
 
+
     //--------------------- Fonctions utiles ------------------------------------
 
     // Watchers pour lb_nom et lb_auteur afin de remplir nom_complet automatiquement
@@ -66,11 +67,18 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 // Gestion des droits
 // ctrl.userRights = loginSrv.getCurrentUserRights();
 
-    // Fonction pour réinitialiser les champs du formulaire
+    // Réinitialisation des champs du formulaire
     ctrl.resetForm = function() {
         ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
+// appeler assi refreshForm pour initialiser les saisies des rangs taxo
         console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
     };
+
+    // Suppression de la saisie d'un rang taxonomique ou de tous les rangs
+    ctrl.refreshForm = function(nomRang, $event) {
+        console.log("Button clicked: " + nomRang);
+    };
+
 
 
 //--------------------- Ajout d'un nouveau taxon ------------------------------------
