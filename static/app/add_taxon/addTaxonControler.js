@@ -1,6 +1,5 @@
 app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, TaxonService) {
 
-    //--------------------- Valeurs par défaut ------------------------------------
     var ctrl = this;
     ctrl.route = 'addTaxon';
 
@@ -20,8 +19,8 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         ctrl.group2Inpn = group2Inpn;
         ctrl.group3Inpn = group3Inpn;
 
-        // Initialisation de newTaxon avec les valeurs par défaut
-        ctrl.newTaxon = {
+        // Sauvegarder les valeurs par défaut dans une variable
+        ctrl.defaultTaxon = {
             lb_nom: null,
             lb_auteur: null,
             nom_complet: null,
@@ -42,6 +41,9 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
             group2_inpn: null,
             group3_inpn: null,
         };
+
+        // Initialiser newTaxon avec les valeurs par défaut
+        ctrl.resetForm();
 
         // Appliquer les changements dans $scope
         $scope.$apply();
@@ -64,10 +66,14 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 // Gestion des droits
 // ctrl.userRights = loginSrv.getCurrentUserRights();
 
+    // Fonction pour réinitialiser les champs du formulaire
+    ctrl.resetForm = function() {
+        ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
+        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+    };
 
 
-
-    //--------------------- Ajout d'un nouveau taxon ------------------------------------
+//--------------------- Ajout d'un nouveau taxon ------------------------------------
 
     ctrl.addTaxon = function(newTaxon) {
 
@@ -95,10 +101,9 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 
 // Envoi des données A FAIRE
         console.log('Taxon ajouté avec succès !');
-        console.log(newTaxon);
+        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
 
+        // Réinitialiser le formulaire après l'ajout
+        ctrl.resetForm();
     };
-
-    
 }]);
-
