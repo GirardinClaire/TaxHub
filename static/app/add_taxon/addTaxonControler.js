@@ -80,6 +80,11 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 //--------------------- Ajout d'un nouveau taxon ------------------------------------
 
     ctrl.addTaxon = function(newTaxon) {
+        // Vérification des champs obligatoires
+        if (!newTaxon.lb_nom || !newTaxon.rang || newTaxon.group1_inpn === '' || newTaxon.group2_inpn === '') {
+            alert("Veuillez remplir tous les champs obligatoires.\n(A savoir : 'Nom du taxon', 'Rang', 'Groupe INPN 1' et 'Groupe INPN 2'");
+            return;
+        }
 
         // Convertir respectivement statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;

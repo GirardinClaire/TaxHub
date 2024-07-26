@@ -22,9 +22,9 @@
 
                 <div class="row">
                     <div class="col-md-4 form-group"> <!-- lb_nom -->
-                        <label for="inputNom">Nom du taxon *</label>
+                        <label for="inputNom">Nom du taxon *</label> <!-- Champs obligatoire -->
                         <input type="text" class="form-control"
-                        id="inputNom" ng-model="ctrl.newTaxon.lb_nom" required> <!-- Champs obligatoire -->
+                        id="inputNom" ng-model="ctrl.newTaxon.lb_nom">
                     </div>
 
                     <div class="col-md-4 form-group"> <!-- lb_auteur -->
@@ -79,23 +79,23 @@
 
                 <div class="row">
                     <div class="col-md-4 form-group"> <!-- statut -->
-                        <label for="inputStatut">Statut</label> <!-- Choix dans une liste -->
+                        <label for="inputStatut">Statut</label>
                         <select class="form-control" id="inputStatut" ng-model="ctrl.newTaxon.statut"
-                            ng-options="statut.nom_statut for statut in ctrl.statuts">
+                            ng-options="statut.nom_statut for statut in ctrl.statuts"> <!-- Choix dans une liste -->
                         </select>
                     </div>
 
                     <div class="col-md-4 form-group"> <!-- habitat -->
-                        <label for="inputHabitat">Habitat</label> <!-- Choix dans une liste -->
+                        <label for="inputHabitat">Habitat</label>
                         <select class="form-control" id="inputHabitat" ng-model="ctrl.newTaxon.habitat"
-                            ng-options="habitat.nom_habitat for habitat in ctrl.habitats">
+                            ng-options="habitat.nom_habitat for habitat in ctrl.habitats"> <!-- Choix dans une liste -->
                         </select>
                     </div>
 
                     <div class="col-md-4 form-group"> <!-- rang -->
-                        <label for="inputRang">Rang *</label> <!-- Choix dans une liste -->
+                        <label for="inputRang">Rang *</label> <!-- Champs obligatoire -->
                         <select class="form-control" id="inputRang" ng-model="ctrl.newTaxon.rang"
-                            ng-options="rang.nom_rang for rang in ctrl.rangs" required> <!-- Champs obligatoire -->
+                            ng-options="rang.nom_rang for rang in ctrl.rangs"> <!-- Choix dans une liste -->
                         </select>
                     </div>  
                 </div>
@@ -105,23 +105,23 @@
             
                 <div class="row">
                     <div class="col-md-4 form-group"> <!-- group1_inpn -->
-                        <label for="inputGroup1Inpn">Groupe INPN 1 *</label> <!-- Choix dans une liste -->
+                        <label for="inputGroup1Inpn">Groupe INPN 1 *</label> <!-- Champs obligatoire -->
                         <select class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn"
-                            ng-options="group for group in ctrl.group1Inpn" required> <!-- Champs obligatoire -->
+                            ng-options="group for group in ctrl.group1Inpn"> <!-- Choix dans une liste -->
                         </select>
                     </div>
                 
                     <div class="col-md-4 form-group"> <!-- group2_inpn -->
-                        <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Choix dans une liste -->
+                        <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Champs obligatoire -->
                         <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
-                            ng-options="group for group in ctrl.group2Inpn" required> <!-- Champs obligatoire -->
+                            ng-options="group for group in ctrl.group2Inpn"> <!-- Choix dans une liste -->
                         </select>
                     </div>
                 
                     <div class="col-md-4 form-group"> <!-- group3_inpn -->
-                        <label for="inputGroup3Inpn">Groupe INPN 3</label> <!-- Choix dans une liste -->
+                        <label for="inputGroup3Inpn">Groupe INPN 3</label>
                         <select class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn"
-                            ng-options="group for group in ctrl.group3Inpn">
+                            ng-options="group for group in ctrl.group3Inpn"> <!-- Choix dans une liste -->
                         </select>
                     </div>
                 </div>
