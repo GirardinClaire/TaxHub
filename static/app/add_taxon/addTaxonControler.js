@@ -1,7 +1,10 @@
-app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, TaxonService) {
+app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($scope, TaxonService, loginSrv) {
 
     var ctrl = this;
     ctrl.route = 'addTaxon';
+
+    // Vérifiez si l'utilisateur est admin, pour y adapter le contenu de la page
+    ctrl.isAdmin = loginSrv.getCurrentUserRights().admin;
 
     // Charger les données au démarrage avec Promise.all
     Promise.all([
@@ -72,10 +75,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
     };
 
 
-// Gestion des droits
-// ctrl.userRights = loginSrv.getCurrentUserRights();
-
-
 
 //--------------------- Ajout d'un nouveau taxon ------------------------------------
 
@@ -86,12 +85,12 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
             return;
         }
 
-        // Convertir respectivement statut, habitat et rang en id_statut, id_habitat et id_rang
+        // Convertions respectives de statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;
         newTaxon.id_habitat = newTaxon.habitat.id_habitat;
         newTaxon.id_rang = newTaxon.rang.id_rang;
 
-        // Récupérer les rangs taxonomiques choisis
+        // Récupération des rangs taxonomiques choisis
         newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? null;
         newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? null;
         newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? null;
@@ -106,13 +105,11 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         delete newTaxon.rang;
         delete newTaxon.rangTaxonomique;
 
-// faire une erreur si rang == '' ou si group1 == '' ou si group2 == '' : il faut à tout pris choisir quelque chose pour ces 3 champs
-
 // Envoi des données A FAIRE
         console.log('Taxon ajouté avec succès !');
-        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon.group1_inpn, ctrl.newTaxon.group2_inpn);
+        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
 
-        // Réinitialiser le formulaire après l'ajout
+        // Réinitialisation du formulaire après l'ajout
         ctrl.resetForm();
     };
 }]);
