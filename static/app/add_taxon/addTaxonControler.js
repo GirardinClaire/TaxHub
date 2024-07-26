@@ -80,7 +80,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
     ctrl.addTaxon = function(newTaxon) {
         // Vérification des champs obligatoires
         if (!newTaxon.lb_nom || !newTaxon.rang || newTaxon.group1_inpn === '' || newTaxon.group2_inpn === '') {
-            alert("Veuillez remplir tous les champs obligatoires.\n(A savoir : 'Nom du taxon', 'Rang', 'Groupe INPN 1' et 'Groupe INPN 2'");
+            alert("Veuillez remplir tous les champs obligatoires.\n A savoir : 'Nom du taxon', 'Rang', 'Groupe INPN 1' et 'Groupe INPN 2'");
             return;
         }
 
