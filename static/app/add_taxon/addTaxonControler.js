@@ -43,7 +43,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         };
 
         // Initialiser newTaxon avec les valeurs par défaut
-        ctrl.resetForm();
+        ctrl.resetForm("initialisation");
 
         // Appliquer les changements dans $scope
         $scope.$apply();
@@ -68,10 +68,11 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 // ctrl.userRights = loginSrv.getCurrentUserRights();
 
     // Réinitialisation des champs du formulaire
-    ctrl.resetForm = function() {
+    ctrl.resetForm = function(status) {
         ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
-// appeler assi refreshForm pour initialiser les saisies des rangs taxo
-        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+        // Appeler refreshForm de la Directive pour réinitialiser les saisies des rangs taxonomiques
+        // uniquement si ce n'est pas l'itnitialisation
+        if (status != "initialisation") $scope.$broadcast('resetTaxHierarchy');
     };
 
 
@@ -106,6 +107,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
 
         // Réinitialiser le formulaire après l'ajout
-        ctrl.resetForm();
+        ctrl.resetForm("initialisation");
     };
 }]);
