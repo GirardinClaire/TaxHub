@@ -75,30 +75,28 @@ app.directive('addHierarchieDir', ['$http', 'backendCfg', function ($http, backe
 
       // Vider la sélection des rang taxonomiques 
       $scope.refreshForm = function() {
-        if (($scope.taxHierarchieSelected === undefined) || ($scope.taxHierarchieSelected === '=')) {
+        // if (($scope.taxHierarchieSelected === undefined) || ($scope.taxHierarchieSelected === '=')) {
+        if ($scope.taxHierarchieSelected === undefined) {
           alert("La hiérarchie taxonomique est déjà vide.");
-          $scope.regne = undefined;
-          $scope.phylum = undefined;
-          $scope.classe = undefined;
-          $scope.ordre = undefined;
-          $scope.famille = undefined;
-          $scope.sous_famille = undefined;
-          $scope.tribu = undefined;
         } else {
-          $scope.taxHierarchieSelected = '=';
-          $scope.regne = undefined;
-          $scope.phylum = undefined;
-          $scope.classe = undefined;
-          $scope.ordre = undefined;
-          $scope.famille = undefined;
-          $scope.sous_famille = undefined;
-          $scope.tribu = undefined;
+          $scope.resetTaxHierarchy();
         }
       };
 
-      // Écouter l'événement de réinitialisation
+      $scope.resetTaxHierarchy = function() {
+        $scope.taxHierarchieSelected = undefined;
+        $scope.regne = undefined;
+        $scope.phylum = undefined;
+        $scope.classe = undefined;
+        $scope.ordre = undefined;
+        $scope.famille = undefined;
+        $scope.sous_famille = undefined;
+        $scope.tribu = undefined;
+      };
+
+      // Écouter l'événement de réinitialisation : fait le lien entre le controler et la directive
       $scope.$on('resetTaxHierarchy', function() {
-        $scope.refreshForm();
+        $scope.resetTaxHierarchy();
       });
 
     }

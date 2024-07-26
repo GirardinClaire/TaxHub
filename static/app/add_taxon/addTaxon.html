@@ -81,14 +81,14 @@
                     <div class="col-md-4 form-group"> <!-- statut -->
                         <label for="inputStatut">Statut</label> <!-- Choix dans une liste -->
                         <select class="form-control" id="inputStatut" ng-model="ctrl.newTaxon.statut"
-                            ng-options="statut.nom_statut for statut in ctrl.statuts" required> <!-- Champs obligatoire -->
+                            ng-options="statut.nom_statut for statut in ctrl.statuts">
                         </select>
                     </div>
 
                     <div class="col-md-4 form-group"> <!-- habitat -->
                         <label for="inputHabitat">Habitat</label> <!-- Choix dans une liste -->
                         <select class="form-control" id="inputHabitat" ng-model="ctrl.newTaxon.habitat"
-                            ng-options="habitat.nom_habitat for habitat in ctrl.habitats" required> <!-- Champs obligatoire -->
+                            ng-options="habitat.nom_habitat for habitat in ctrl.habitats">
                         </select>
                     </div>
 
@@ -105,16 +105,16 @@
             
                 <div class="row">
                     <div class="col-md-4 form-group"> <!-- group1_inpn -->
-                        <label for="inputGroup1Inpn">Groupe INPN 1</label> <!-- Choix dans une liste -->
+                        <label for="inputGroup1Inpn">Groupe INPN 1 *</label> <!-- Choix dans une liste -->
                         <select class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn"
-                            ng-options="group for group in ctrl.group1Inpn">
+                            ng-options="group for group in ctrl.group1Inpn" required> <!-- Champs obligatoire -->
                         </select>
                     </div>
                 
                     <div class="col-md-4 form-group"> <!-- group2_inpn -->
-                        <label for="inputGroup2Inpn">Groupe INPN 2</label> <!-- Choix dans une liste -->
+                        <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Choix dans une liste -->
                         <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
-                            ng-options="group for group in ctrl.group2Inpn">
+                            ng-options="group for group in ctrl.group2Inpn" required> <!-- Champs obligatoire -->
                         </select>
                     </div>
                 

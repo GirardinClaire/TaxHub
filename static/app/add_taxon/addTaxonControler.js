@@ -37,13 +37,13 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
 
             id_rang: '',
 
-            group1_inpn: null,
-            group2_inpn: null,
+            group1_inpn: '',
+            group2_inpn: '',
             group3_inpn: null,
         };
 
         // Initialiser newTaxon avec les valeurs par défaut
-        ctrl.resetForm("initialisation");
+        ctrl.resetForm();
 
         // Appliquer les changements dans $scope
         $scope.$apply();
@@ -64,16 +64,17 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         }
     });
 
+    // Réinitialisation des champs du formulaire
+    ctrl.resetForm = function() {
+        ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
+        // Appeler resetTaxHierarchy de la Directive pour réinitialiser les saisies des rangs taxonomiques
+        $scope.$broadcast('resetTaxHierarchy');
+    };
+
+
 // Gestion des droits
 // ctrl.userRights = loginSrv.getCurrentUserRights();
 
-    // Réinitialisation des champs du formulaire
-    ctrl.resetForm = function(status) {
-        ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
-        // Appeler refreshForm de la Directive pour réinitialiser les saisies des rangs taxonomiques
-        // uniquement si ce n'est pas l'itnitialisation
-        if (status != "initialisation") $scope.$broadcast('resetTaxHierarchy');
-    };
 
 
 //--------------------- Ajout d'un nouveau taxon ------------------------------------
@@ -100,13 +101,13 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', function($scope, Taxon
         delete newTaxon.rang;
         delete newTaxon.rangTaxonomique;
 
-// faire une erreur si rang == '' : il faut à tout pris choisir quelque chose
+// faire une erreur si rang == '' ou si group1 == '' ou si group2 == '' : il faut à tout pris choisir quelque chose pour ces 3 champs
 
 // Envoi des données A FAIRE
         console.log('Taxon ajouté avec succès !');
-        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon.group1_inpn, ctrl.newTaxon.group2_inpn);
 
         // Réinitialiser le formulaire après l'ajout
-        ctrl.resetForm("initialisation");
+        ctrl.resetForm();
     };
 }]);
