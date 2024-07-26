@@ -70,13 +70,12 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
     // Réinitialisation des champs du formulaire
     ctrl.resetForm = function() {
         ctrl.newTaxon = angular.copy(ctrl.defaultTaxon);
-        // Appeler resetTaxHierarchy de la Directive pour réinitialiser les saisies des rangs taxonomiques
-        $scope.$broadcast('resetTaxHierarchy');
+        $scope.$broadcast('resetTaxHierarchy'); // Appel de resetTaxHierarchy (Directive) pour réinitialiser les saisies des rangs taxonomiques
     };
 
 
 
-//--------------------- Ajout d'un nouveau taxon ------------------------------------
+    //--------------------- Ajout d'un nouveau taxon ------------------------------------
 
     ctrl.addTaxon = function(newTaxon) {
         // Vérification des champs obligatoires
@@ -105,11 +104,13 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         delete newTaxon.rang;
         delete newTaxon.rangTaxonomique;
 
-// Envoi des données A FAIRE
-        console.log('Taxon ajouté avec succès !');
-        console.log(Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+        // Envoi des données à l'API pour insérer le nouveau taxon en bdd
+        TaxonService.addTaxon(newTaxon).then(response => {
+            console.log('Taxon ajouté avec succès !', Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+            ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
+        }).catch(error => {
+            console.error("Erreur lors de l'ajout du taxon:", error);
+        });
 
-        // Réinitialisation du formulaire après l'ajout
-        ctrl.resetForm();
     };
 }]);

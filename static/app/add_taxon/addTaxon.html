@@ -87,6 +87,32 @@
                     </div>
 
 
+                    <h3>Groupes INPN</h3>
+
+                    <div class="row">
+                        <div class="col-md-4 form-group"> <!-- group1_inpn -->
+                            <label for="inputGroup1Inpn">Groupe INPN 1 *</label> <!-- Champs obligatoire -->
+                            <select class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn"
+                                ng-options="group for group in ctrl.group1Inpn"> <!-- Choix dans une liste -->
+                            </select>
+                        </div>
+                    
+                        <div class="col-md-4 form-group"> <!-- group2_inpn -->
+                            <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Champs obligatoire -->
+                            <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
+                                ng-options="group for group in ctrl.group2Inpn"> <!-- Choix dans une liste -->
+                            </select>
+                        </div>
+                    
+                        <div class="col-md-4 form-group"> <!-- group3_inpn -->
+                            <label for="inputGroup3Inpn">Groupe INPN 3</label>
+                            <select class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn"
+                                ng-options="group for group in ctrl.group3Inpn"> <!-- Choix dans une liste -->
+                            </select>
+                        </div>
+                    </div>
+
+
                     <h3>Classification et habitat du taxon</h3>
 
                     <div class="row">
@@ -113,32 +139,6 @@
                     </div>
 
 
-                    <h3>Groupes INPN</h3>
-
-                    <div class="row">
-                        <div class="col-md-4 form-group"> <!-- group1_inpn -->
-                            <label for="inputGroup1Inpn">Groupe INPN 1 *</label> <!-- Champs obligatoire -->
-                            <select class="form-control" id="inputGroup1Inpn" ng-model="ctrl.newTaxon.group1_inpn"
-                                ng-options="group for group in ctrl.group1Inpn"> <!-- Choix dans une liste -->
-                            </select>
-                        </div>
-                    
-                        <div class="col-md-4 form-group"> <!-- group2_inpn -->
-                            <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Champs obligatoire -->
-                            <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
-                                ng-options="group for group in ctrl.group2Inpn"> <!-- Choix dans une liste -->
-                            </select>
-                        </div>
-                    
-                        <div class="col-md-4 form-group"> <!-- group3_inpn -->
-                            <label for="inputGroup3Inpn">Groupe INPN 3</label>
-                            <select class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn"
-                                ng-options="group for group in ctrl.group3Inpn"> <!-- Choix dans une liste -->
-                            </select>
-                        </div>
-                    </div>
-
-                    
                     <!-- Bouton pour soumettre le formulaire -->
                     <button type="submit" class="btn btn-primary">Ajouter</button>
                 </form>

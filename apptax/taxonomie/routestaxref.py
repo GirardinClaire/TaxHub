@@ -233,108 +233,6 @@ def getTaxrefHierarchieBibNoms(rang):
     return [r.as_dict() for r in results]
 
 
-def genericTaxrefList(inBibtaxon, parameters):
-    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
-
-    nbResultsWithoutFilter = q.count()
-
-    id_liste = request.args.get("id_liste", type=str, default=[])
-    if id_liste and id_liste != "-1":
-        id_liste = id_liste.split(",")
-        filter_cor_nom_liste = aliased(CorNomListe)
-        filter_bib_noms = aliased(BibNoms)
-        q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
-        q = q.join(filter_cor_nom_liste, filter_bib_noms.id_nom == filter_cor_nom_liste.id_nom)
-        q = q.filter(filter_cor_nom_liste.id_liste.in_(tuple(id_liste)))
-
-    if inBibtaxon is True:
-        q = q.filter(BibNoms.cd_nom.isnot(None))
-
-    # Traitement des parametres
-    limit = parameters.get("limit", 20, int)
-    page = parameters.get("page", 1, int)
-
-    for param in parameters:
-        if hasattr(Taxref, param) and parameters[param] != "":
-            col = getattr(Taxref, param)
-            q = q.filter(col == parameters[param])
-        elif param == "is_ref" and parameters[param] == "true":
-            q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
-        elif param == "ilike":
-            q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
-        elif param == "is_inbibtaxons" and parameters[param] == "true":
-            q = q.filter(BibNoms.cd_nom.isnot(None))
-        elif param.split("-")[0] == "ilike":
-            value = unquote(parameters[param])
-            column = str(param.split("-")[1])
-            col = getattr(Taxref, column)
-            q = q.filter(col.ilike(value + "%"))
-
-    nbResults = q.count()
-
-    # Order by
-    if "orderby" in parameters:
-        if getattr(Taxref, parameters["orderby"], None):
-            orderCol = getattr(Taxref, parameters["orderby"])
-        else:
-            orderCol = None
-        if "order" in parameters and orderCol:
-            if parameters["order"] == "desc":
-                orderCol = orderCol.desc()
-        q = q.order_by(orderCol)
-
-    # Filtrer champs demandés par la requête
-    fields = request.args.get("fields", type=str, default=[])
-    if fields:
-        fields = fields.split(",")
-    fields_to_filter = None
-    if fields:
-        fields_to_filter = [f for f in fields if getattr(Taxref, f, None)]
-
-    results = q.paginate(page=page, per_page=limit, error_out=False)
-
-    items = []
-    for r in results.items:
-        data = r.as_dict(fields=fields_to_filter)
-        if not fields or "listes" in fields:
-            id_listes = []
-            if r.bib_nom:
-                id_listes = [l.id_liste for l in r.bib_nom[0].listes]
-            data = dict(data, listes=id_listes)
-        if not fields or "id_nom" in fields:
-            id_nom = None
-            if r.bib_nom:
-                id_nom = r.bib_nom[0].id_nom
-            data = dict(data, id_nom=id_nom)
-
-        items.append(data)
-
-    return {
-        "items": items,
-        "total": nbResultsWithoutFilter,
-        "total_filtered": nbResults,
-        "limit": limit,
-        "page": page,
-    }
-
-
-def genericHierarchieSelect(tableHierarchy, rang, parameters):
-    dfRang = tableHierarchy.__table__.columns["id_rang"]
-    q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
-
-    limit = parameters.get("limit", 100, int)
-
-    for param in parameters:
-        if param in tableHierarchy.__table__.columns:
-            col = getattr(tableHierarchy.__table__.columns, param)
-            q = q.filter(col == parameters[param])
-        elif param == "ilike":
-            q = q.filter(tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param] + "%"))
-
-    results = q.limit(limit).all()
-    return results
-
-
 @adresses.route("/regnewithgroupe2", methods=["GET"])
 @json_resp
 def get_regneGroup2Inpn_taxref():
@@ -539,3 +437,155 @@ def get_AllTaxrefNameByListe(id_liste=None):
 def get_bib_hab():
     data = db.session.query(BibTaxrefHabitats).all()
     return [d.as_dict() for d in data]
+
+
+### METHODS 'POST'
+@adresses.route("/", methods=["POST"])
+def add_taxon():
+    """
+    Route utilisée pour insérer un nouveau taxon en bdd
+    params POST :
+        - objet représentant les données d'un taxon à ajouter. C'est un modèle contenant
+            toutes les informations nécessaires pour créer un nouveau taxon.
+    """
+    newTaxon = request.get_json()
+    # Calculer la prochaine valeur négative pour cd_nom
+    next_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1).scalar()
+
+    new_taxon = Taxref(
+        cd_nom=next_cd_nom,
+        cd_ref=next_cd_nom,
+        cd_taxsup=newTaxon.get("cd_taxsup"),
+        cd_sup=newTaxon.get("cd_sup"),
+        nom_complet_html=newTaxon.get("nom_complet_html"),
+        lb_nom=newTaxon.get("lb_nom"),
+        lb_auteur=newTaxon.get("lb_auteur"),
+        nom_complet=newTaxon.get("nom_complet"),
+        nom_valide=newTaxon.get("nom_valide"),
+        nom_vern=newTaxon.get("nom_vern"),
+        nom_vern_eng=newTaxon.get("nom_vern_eng"),
+        url=newTaxon.get("url"),
+        regne=newTaxon.get("regne"),
+        phylum=newTaxon.get("phylum"),
+        classe=newTaxon.get("classe"),
+        ordre=newTaxon.get("ordre"),
+        famille=newTaxon.get("famille"),
+        sous_famille=newTaxon.get("sous_famille"),
+        tribu=newTaxon.get("tribu"),
+        id_statut=newTaxon.get("id_statut"),
+        id_habitat=newTaxon.get("id_habitat"),
+        id_rang=newTaxon.get("id_rang"),
+        group1_inpn=newTaxon.get("group1_inpn"),
+        group2_inpn=newTaxon.get("group2_inpn"),
+        group3_inpn=newTaxon.get("group3_inpn"),
+    )
+
+    db.session.add(new_taxon)
+    db.session.commit()
+
+    return jsonify({"message": "Taxon added successfully"}), 201
+
+
+### Fonctions Utiles ###
+
+
+def genericTaxrefList(inBibtaxon, parameters):
+    q = Taxref.query.options(raiseload("*"), joinedload(Taxref.bib_nom).joinedload(BibNoms.listes))
+
+    nbResultsWithoutFilter = q.count()
+
+    id_liste = request.args.get("id_liste", type=str, default=[])
+    if id_liste and id_liste != "-1":
+        id_liste = id_liste.split(",")
+        filter_cor_nom_liste = aliased(CorNomListe)
+        filter_bib_noms = aliased(BibNoms)
+        q = q.join(filter_bib_noms, filter_bib_noms.cd_nom == Taxref.cd_nom)
+        q = q.join(filter_cor_nom_liste, filter_bib_noms.id_nom == filter_cor_nom_liste.id_nom)
+        q = q.filter(filter_cor_nom_liste.id_liste.in_(tuple(id_liste)))
+
+    if inBibtaxon is True:
+        q = q.filter(BibNoms.cd_nom.isnot(None))
+
+    # Traitement des parametres
+    limit = parameters.get("limit", 20, int)
+    page = parameters.get("page", 1, int)
+
+    for param in parameters:
+        if hasattr(Taxref, param) and parameters[param] != "":
+            col = getattr(Taxref, param)
+            q = q.filter(col == parameters[param])
+        elif param == "is_ref" and parameters[param] == "true":
+            q = q.filter(Taxref.cd_nom == Taxref.cd_ref)
+        elif param == "ilike":
+            q = q.filter(Taxref.lb_nom.ilike(parameters[param] + "%"))
+        elif param == "is_inbibtaxons" and parameters[param] == "true":
+            q = q.filter(BibNoms.cd_nom.isnot(None))
+        elif param.split("-")[0] == "ilike":
+            value = unquote(parameters[param])
+            column = str(param.split("-")[1])
+            col = getattr(Taxref, column)
+            q = q.filter(col.ilike(value + "%"))
+
+    nbResults = q.count()
+
+    # Order by
+    if "orderby" in parameters:
+        if getattr(Taxref, parameters["orderby"], None):
+            orderCol = getattr(Taxref, parameters["orderby"])
+        else:
+            orderCol = None
+        if "order" in parameters and orderCol:
+            if parameters["order"] == "desc":
+                orderCol = orderCol.desc()
+        q = q.order_by(orderCol)
+
+    # Filtrer champs demandés par la requête
+    fields = request.args.get("fields", type=str, default=[])
+    if fields:
+        fields = fields.split(",")
+    fields_to_filter = None
+    if fields:
+        fields_to_filter = [f for f in fields if getattr(Taxref, f, None)]
+
+    results = q.paginate(page=page, per_page=limit, error_out=False)
+
+    items = []
+    for r in results.items:
+        data = r.as_dict(fields=fields_to_filter)
+        if not fields or "listes" in fields:
+            id_listes = []
+            if r.bib_nom:
+                id_listes = [l.id_liste for l in r.bib_nom[0].listes]
+            data = dict(data, listes=id_listes)
+        if not fields or "id_nom" in fields:
+            id_nom = None
+            if r.bib_nom:
+                id_nom = r.bib_nom[0].id_nom
+            data = dict(data, id_nom=id_nom)
+
+        items.append(data)
+
+    return {
+        "items": items,
+        "total": nbResultsWithoutFilter,
+        "total_filtered": nbResults,
+        "limit": limit,
+        "page": page,
+    }
+
+
+def genericHierarchieSelect(tableHierarchy, rang, parameters):
+    dfRang = tableHierarchy.__table__.columns["id_rang"]
+    q = db.session.query(tableHierarchy).filter(tableHierarchy.id_rang == rang)
+
+    limit = parameters.get("limit", 100, int)
+
+    for param in parameters:
+        if param in tableHierarchy.__table__.columns:
+            col = getattr(tableHierarchy.__table__.columns, param)
+            q = q.filter(col == parameters[param])
+        elif param == "ilike":
+            q = q.filter(tableHierarchy.__table__.columns.lb_nom.ilike(parameters[param] + "%"))
+
+    results = q.limit(limit).all()
+    return results
