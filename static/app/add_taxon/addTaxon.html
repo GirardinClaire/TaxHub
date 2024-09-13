@@ -35,11 +35,19 @@
                         accept=".csv" ngf-max-size="10MB" ngf-change="ctrl.uploadCSV($file)">
                 </div>
 
-                <!-- Bouton pour lire le fichier CSV -->
-                <button type="button" class="btn btn-primary" ng-click="ctrl.readCSV()">Lire le fichier CSV</button>
+                <!-- Bouton pour ajouter les données contenues dans le csv choisi i.e. ajout multiple de taxons-->
+                <button type="button" class="btn btn-primary" ng-click="ctrl.addTaxonsCSV()">Ajouter les taxons</button>
+
+                <!-- Bouton pour retirer le fichier CSV -->
+                <button type="button" class="btn btn-danger" ng-click="ctrl.removeCSV()" ng-if="ctrl.csvFile">Retirer le fichier</button>
+
+                <!-- Bouton pour télécharger le fichier CSV template -->
+                <a href="static/csv/template.csv" class="btn btn-secondary" download="template.csv">Télécharger un fichier CSV template</a>
+
+<!----------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
                 <!-- Formulaire pour ajouter un taxon -->
-                <form name="addTaxonForm" ng-submit="ctrl.addTaxon(ctrl.newTaxon)" autocomplete="off">
+                <form name="addTaxonForm" ng-submit="ctrl.addTaxonForm(ctrl.newTaxon)" autocomplete="off">
 
                     <h3>Dénominations du taxon</h3>
 
@@ -144,7 +152,7 @@
 
 
                     <!-- Bouton pour soumettre le formulaire -->
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <button type="submit" class="btn btn-primary">Ajouter le taxon</button>
                 </form>
 
             </div>

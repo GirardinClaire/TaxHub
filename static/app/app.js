@@ -1,6 +1,6 @@
 var app = angular.module('taxonsApp', ['ngRoute', 'ngTable', 'ui.bootstrap',
     'angular.filter', 'ngSanitize', 'ngCsv', 'toaster', 'ngCookies',
-    'ngFileUpload', 'dialogs.main'
+    'ngFileUpload', 'dialogs.main', 'ngFileUpload'
   ])
   .service('locationHistoryService', function() {
     return {

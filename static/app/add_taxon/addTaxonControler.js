@@ -2,6 +2,10 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
 
     var ctrl = this;
     ctrl.route = 'addTaxon';
+    ctrl.csvFile = null,
+    ctrl.csvData = [];
+    ctrl.csvHeaders = [];
+
 
     // Vérifiez si l'utilisateur est admin, pour y adapter le contenu de la page
     ctrl.isAdmin = loginSrv.getCurrentUserRights().admin;
@@ -40,7 +44,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
 
             group1_inpn: '',
             group2_inpn: '',
-            group3_inpn: null,
         };
 
         // Initialiser newTaxon avec les valeurs par défaut
@@ -72,10 +75,19 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
     };
 
 
+    // Insertion d'un nouveau taxon en Bdd
+    ctrl.addTaxon = function(newTaxon) {
+        TaxonService.addTaxon(newTaxon).then(response => {
+            console.log('Taxon ajouté avec succès !', Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
+            ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
+        }).catch(error => {
+            console.error("Erreur lors de l'ajout du taxon:", error);
+        });
+    }
 
     //--------------------- Ajout d'un nouveau taxon ------------------------------------
 
-    ctrl.addTaxon = function(newTaxon) {
+    ctrl.addTaxonForm = function(newTaxon) {
         // Vérification des champs obligatoires
         if (!newTaxon.lb_nom || !newTaxon.rang || newTaxon.group1_inpn === '' || newTaxon.group2_inpn === '') {
             alert("Veuillez remplir tous les champs obligatoires.\n A savoir : 'Nom du taxon', 'Rang', 'Groupe INPN 1' et 'Groupe INPN 2'");
@@ -102,13 +114,45 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         delete newTaxon.rang;
         delete newTaxon.rangTaxonomique;
 
-        // Envoi des données à l'API pour insérer le nouveau taxon en bdd
-        TaxonService.addTaxon(newTaxon).then(response => {
-            console.log('Taxon ajouté avec succès !', Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
-            ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
-        }).catch(error => {
-            console.error("Erreur lors de l'ajout du taxon:", error);
-        });
+        ctrl.addTaxon(newTaxon);
 
     };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    // Fonction appelée lorsque le fichier est sélectionné
+    ctrl.uploadCSV = function(file) {
+        ctrl.csvFile = file;
+    };
+
+    // Fonction pour retirer le fichier CSV sélectionné
+    ctrl.removeCSV = function() {
+        ctrl.csvFile = null;
+    };
+
+    // Fonction pour ajouter tous les taxons compris dans le csv
+    ctrl.addTaxonsCSV = function() {
+        if (ctrl.csvFile) {
+            Papa.parse(ctrl.csvFile, {
+                complete: function(results) {
+                    $scope.$apply(function() {
+                        ctrl.csvData = results.data;
+                        for (let i = 0; i < ctrl.csvData.length; i++) {
+                            newTaxon = ctrl.csvData[i];
+                            newTaxon.nom_complet = newTaxon.lb_nom + ' ' + newTaxon.lb_auteur;
+                            ctrl.addTaxon(newTaxon);
+                        }
+                    });
+                },
+                header: true
+            });
+        } else {
+            alert("Veuillez sélectionner un fichier CSV.");
+        }
+    };
+
+
+
 }]);

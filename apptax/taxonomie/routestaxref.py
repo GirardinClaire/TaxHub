@@ -455,9 +455,6 @@ def add_taxon():
     add_Taxref = Taxref(
         cd_nom=next_cd_nom,
         cd_ref=next_cd_nom,
-        cd_taxsup=newTaxon.get("cd_taxsup"),
-        cd_sup=newTaxon.get("cd_sup"),
-        nom_complet_html=newTaxon.get("nom_complet_html"),
         lb_nom=newTaxon.get("lb_nom"),
         lb_auteur=newTaxon.get("lb_auteur"),
         nom_complet=newTaxon.get("nom_complet"),
@@ -477,7 +474,6 @@ def add_taxon():
         id_rang=newTaxon.get("id_rang"),
         group1_inpn=newTaxon.get("group1_inpn"),
         group2_inpn=newTaxon.get("group2_inpn"),
-        group3_inpn=newTaxon.get("group3_inpn"),
     )
 
     add_CorNomListe_100 = CorNomListe(
