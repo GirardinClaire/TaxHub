@@ -12,15 +12,13 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         TaxonService.getIdNomHabitats(),
         TaxonService.getIdNomRangs(),
         TaxonService.getGroup1Inpn(),
-        TaxonService.getGroup2Inpn(),
-        TaxonService.getGroup3Inpn()
-    ]).then(([statuts, habitats, rangs, group1Inpn, group2Inpn, group3Inpn]) => {
+        TaxonService.getGroup2Inpn()
+    ]).then(([statuts, habitats, rangs, group1Inpn, group2Inpn]) => {
         ctrl.statuts = statuts;
         ctrl.habitats = habitats;
         ctrl.rangs = rangs;
         ctrl.group1Inpn = group1Inpn;
         ctrl.group2Inpn = group2Inpn;
-        ctrl.group3Inpn = group3Inpn;
 
         // Sauvegarder les valeurs par défaut dans une variable
         ctrl.defaultTaxon = {

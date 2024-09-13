@@ -449,10 +449,10 @@ def add_taxon():
             toutes les informations nécessaires pour créer un nouveau taxon.
     """
     newTaxon = request.get_json()
+
     # Calculer la prochaine valeur négative pour cd_nom
     next_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1).scalar()
-
-    new_taxon = Taxref(
+    add_Taxref = Taxref(
         cd_nom=next_cd_nom,
         cd_ref=next_cd_nom,
         cd_taxsup=newTaxon.get("cd_taxsup"),
@@ -480,7 +480,26 @@ def add_taxon():
         group3_inpn=newTaxon.get("group3_inpn"),
     )
 
-    db.session.add(new_taxon)
+    add_CorNomListe_100 = CorNomListe(
+        id_liste=100,
+        id_nom=next_cd_nom,
+    )
+
+    add_CorNomListe_101 = CorNomListe(
+        id_liste=101,
+        id_nom=next_cd_nom,
+    )
+
+    add_BibNoms = BibNoms(
+        cd_nom=next_cd_nom,
+        cd_ref=next_cd_nom,
+        nom_francais=newTaxon.get("nom_vern"),
+    )
+
+    db.session.add(add_Taxref)
+    db.session.add(add_CorNomListe_100)
+    db.session.add(add_CorNomListe_101)
+    db.session.add(add_BibNoms)
     db.session.commit()
 
     return jsonify({"message": "Taxon added successfully"}), 201

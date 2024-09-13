@@ -27,6 +27,17 @@
             
             <!-- Sinon Afficher le formulaire si l'utilisateur est admin -->
             <div ng-if="ctrl.isAdmin">
+
+                <!-- Partie pour uploader un CSV -->
+                <div class="form-group">
+                    <label for="csvUpload">Charger un fichier CSV</label>
+                    <input type="file" id="csvUpload" ngf-select ng-model="ctrl.csvFile" name="file" 
+                        accept=".csv" ngf-max-size="10MB" ngf-change="ctrl.uploadCSV($file)">
+                </div>
+
+                <!-- Bouton pour lire le fichier CSV -->
+                <button type="button" class="btn btn-primary" ng-click="ctrl.readCSV()">Lire le fichier CSV</button>
+
                 <!-- Formulaire pour ajouter un taxon -->
                 <form name="addTaxonForm" ng-submit="ctrl.addTaxon(ctrl.newTaxon)" autocomplete="off">
 
@@ -101,13 +112,6 @@
                             <label for="inputGroup2Inpn">Groupe INPN 2 *</label> <!-- Champs obligatoire -->
                             <select class="form-control" id="inputGroup2Inpn" ng-model="ctrl.newTaxon.group2_inpn"
                                 ng-options="group for group in ctrl.group2Inpn"> <!-- Choix dans une liste -->
-                            </select>
-                        </div>
-                    
-                        <div class="col-md-4 form-group"> <!-- group3_inpn -->
-                            <label for="inputGroup3Inpn">Groupe INPN 3</label>
-                            <select class="form-control" id="inputGroup3Inpn" ng-model="ctrl.newTaxon.group3_inpn"
-                                ng-options="group for group in ctrl.group3Inpn"> <!-- Choix dans une liste -->
                             </select>
                         </div>
                     </div>
