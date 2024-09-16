@@ -21,7 +21,11 @@ app.service('TaxonService', ['$http', 'backendCfg', function($http, backendCfg) 
     };
 
     this.addTaxon = function(newTaxon) {
-        return $http.post(backendCfg.api_url+'taxref', newTaxon).then(response => response.data);
+        return $http.post(backendCfg.api_url+'taxref/addTaxon', newTaxon).then(response => response.data);
+    };
+
+    this.deleteTaxon = function() {
+        return $http.post(backendCfg.api_url+'taxref/deleteTaxon').then(response => response.data);
     };
 
 }]);
