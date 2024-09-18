@@ -1,7 +1,10 @@
 app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($scope, TaxonService, loginSrv) {
 
     var ctrl = this;
+
     ctrl.route = 'addTaxon';
+    ctrl.viewMode = 'unique'; // Par défaut, l'affichage sera sur l'ajout unique
+
     ctrl.csvFile = null,
     ctrl.csvData = [];
 
@@ -154,9 +157,9 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                         let i = 0;
                         let j = 0;
                         let k = 0;
-                        let listErrors = [];
+                        ctrl.errors = []; // Réinitialiser les erreurs
                         let seenTaxons = new Set();  // Ensemble pour stocker les taxons déjà vus
-    
+
                         // Double vérification en BDD : insertion possible + doublon dans la bdd
                         for (const taxon of ctrl.csvData) {
                             i ++;
@@ -165,7 +168,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                                 await ctrl.addTaxon(taxon, false);
                             } catch (error) {
                                 if (error.data.error != "correct") {
-                                    listErrors.push({ligne: i, type: error.data.error, msg: error.data.message});
+                                    ctrl.errors.push({ligne: i, type: error.data.error, msg: error.data.message});
                                 }
                             }
                         }
@@ -187,34 +190,36 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                                                 taxon.id_rang +
                                                 taxon.group1_inpn + taxon.group2_inpn);
                                 if (seenTaxons.has(taxonKey)) {
-                                    listErrors.push({ligne: j, type: "Doublon interne", msg: "Taxon dupliqué au sein du fichier."});
+                                    ctrl.errors.push({ligne: j, type: "Doublon interne", msg: "Taxon dupliqué au sein du fichier."});
                                 } else {
                                     seenTaxons.add(taxonKey);  // Ajouter la clé au Set
                                 }
                             } catch (error) {
-                                console.log("Erreur dans la vérification des doublons au sein du fichier:", error);
-                                alert("Erreur dans la vérification des doublons au sein du fichier:", error);
+                                console.log("Erreur dans la vérification des doublons au sein du fichier:", error.message);
+                                alert("Erreur dans la vérification des doublons au sein du fichier: " + error.message);
                             }
                         }
 
-                        // SI 0 erreur : on insère TOUS les taxons du fichier
-                        if (listErrors.length == 0) {
+                        // Trier les erreurs par ordre croissant de ligne
+                        ctrl.errors.sort((a, b) => a.ligne - b.ligne);
+
+                        // SI 0 erreur : insertion de TOUS les taxons du fichier
+                        if (ctrl.errors.length == 0) {
                             for (const taxon of ctrl.csvData) {
                                 k ++;
-                                // Boucle asynchrone pour attendre chaque ajout
+                                // Boucle asynchrone pour attendre chaque ajout, et éviter les erreurs d'attibution de cd_nom notamment
                                 try {
                                     await ctrl.addTaxon(taxon, true);
                                 } catch (error) {
-                                    alert("ECHEC ANORMAL DE L'AJOUT de la ligne numéro "+ k +". \n Veuillez procéder à des vérifications à la main en base de données.");
+                                    alert("ECHEC ANORMAL DE L'AJOUT de la ligne numéro " + k + ". \n Veuillez procéder à des vérifications à la main en base de données.");
                                 }
                             }
                             alert('Tous les taxons (' + ctrl.csvData.length + ' taxons) du fichier csv "' + ctrl.csvFile.name + '" ont été ajoutés avec succès !');
-                        } else { // SINON Message d'erreur avec la liste des lignes incorrectes
-                            alert("ECHEC DE L'AJOUT DES TAXONS. Erreur(s) aux lignes: \n" +
-                                listErrors.map(e => "Ligne "+ e.ligne + " : " + e.type).join(', \n'));
+                        } else { // SINON affichage des messages d'erreur
+                            alert("ECHEC DE L'AJOUT DES TAXONS. Veuillez vérifier les erreurs affichées sur la page.");
                         }
                         
-                        // Réinitialisation du fichier CSV en forcant Angular à détecter le changement
+                        // Réinitialisation du fichier CSV en forçant Angular à détecter le changement
                         ctrl.csvFile = null;
                         $scope.$apply();
                     });
@@ -225,6 +230,5 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
             alert("Veuillez sélectionner un fichier CSV.");
         }
     };
-
 
 }]);
