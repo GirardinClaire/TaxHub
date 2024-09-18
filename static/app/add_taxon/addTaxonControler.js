@@ -16,22 +16,22 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         TaxonService.getIdNomRangs(),
         TaxonService.getGroup1Inpn(),
         TaxonService.getGroup2Inpn()
-    ]).then(([statuts, habitats, rangs, group1Inpn, group2Inpn]) => {
-        ctrl.statuts = statuts;
-        ctrl.habitats = habitats;
-        ctrl.rangs = rangs;
-        ctrl.group1Inpn = group1Inpn;
-        ctrl.group2Inpn = group2Inpn;
+    ]).then(([listStatuts, listHabitats, listRangs, listGroup1Inpn, listGroup2Inpn]) => {
+        ctrl.statuts = listStatuts;
+        ctrl.habitats = listHabitats;
+        ctrl.rangs = listRangs;
+        ctrl.group1Inpn = listGroup1Inpn;
+        ctrl.group2Inpn = listGroup2Inpn;
 
         // Sauvegarder les valeurs par défaut dans une variable
         ctrl.defaultTaxon = {
-            lb_nom: null,
-            lb_auteur: null,
-            nom_complet: null,
-            nom_valide: null,
-            nom_vern: null,
-            nom_vern_eng: null,
-            url: null,
+            lb_nom: '',
+            lb_auteur: '',
+            nom_complet: '',
+            nom_valide: '',
+            nom_vern: '',
+            nom_vern_eng: '',
+            url: '',
 
             statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé'),
             id_statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé').id_statut,
@@ -94,8 +94,9 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                 return response; // Réussite, on retourne la réponse
             })
             .catch(error => {
+                ctrl.resetForm(); // Réinitialisation du formulaire même si erreur
                 throw error; // On relance l'erreur pour la gérer avec 'await'
-            });  
+            });
     };
 
     // Suppression du dernier taxon ajouté en bdd
@@ -126,16 +127,17 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         // Convertions respectives de statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;
         newTaxon.id_habitat = newTaxon.habitat.id_habitat;
-        newTaxon.id_rang = newTaxon.rang.id_rang;
+        newTaxon.id_rang = newTaxon.rang.id_rang.trim();
+        
 
         // Récupération des rangs taxonomiques choisis
-        newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? null;
-        newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? null;
-        newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? null;
-        newTaxon.ordre = newTaxon.rangTaxonomique?.ordre ?? null;
-        newTaxon.famille = newTaxon.rangTaxonomique?.famille ?? null;
-        newTaxon.sous_famille = newTaxon.rangTaxonomique?.sous_famille ?? null;
-        newTaxon.tribu = newTaxon.rangTaxonomique?.tribu ?? null;
+        newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? '';
+        newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? '';
+        newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? '';
+        newTaxon.ordre = newTaxon.rangTaxonomique?.ordre ?? '';
+        newTaxon.famille = newTaxon.rangTaxonomique?.famille ?? '';
+        newTaxon.sous_famille = newTaxon.rangTaxonomique?.sous_famille ?? '';
+        newTaxon.tribu = newTaxon.rangTaxonomique?.tribu ?? '';
 
         // Nettoyage des propriétés inutilisées
         delete newTaxon.statut;
@@ -149,7 +151,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                 alert(response.message);
             })
             .catch(error => {
-                alert("Erreur : l'ajout n'a pas pu être effectué.\n "+error.data.message);
+                alert("ECHEC DE L'AJOUT.\n Erreur : "+error.data.message);
             });
 
     };

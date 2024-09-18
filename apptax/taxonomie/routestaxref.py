@@ -452,22 +452,22 @@ def add_taxon():
 
         # Convertir uniquement certains attributs à vérifier en minuscule pour la comparaison
         lb_nom = newTaxon.get("lb_nom").lower() 
-        lb_auteur = newTaxon.get("lb_auteur").lower() if newTaxon.get("lb_auteur") else None
+        lb_auteur = newTaxon.get("lb_auteur").lower()
         nom_complet = newTaxon.get("nom_complet").lower()
-        nom_valide = newTaxon.get("nom_valide").lower() if newTaxon.get("nom_valide") else None
-        nom_vern = newTaxon.get("nom_vern").lower() if newTaxon.get("nom_vern") else None
-        nom_vern_eng = newTaxon.get("nom_vern_eng").lower() if newTaxon.get("nom_vern_eng") else None
-        url = newTaxon.get("url").lower() if newTaxon.get("url") else None
+        nom_valide = newTaxon.get("nom_valide").lower()
+        nom_vern = newTaxon.get("nom_vern").lower()
+        nom_vern_eng = newTaxon.get("nom_vern_eng").lower()
+        url = newTaxon.get("url").lower()
 
         # Vérifier si un taxon similaire existe déjà dans la base de données
         existing_taxon = db.session.query(Taxref).filter(
             db.func.lower(Taxref.lb_nom) == lb_nom,
-            db.func.lower(Taxref.lb_auteur) == lb_auteur if lb_auteur else None,
+            db.func.lower(Taxref.lb_auteur) == lb_auteur,
             db.func.lower(Taxref.nom_complet) == nom_complet,
-            db.func.lower(Taxref.nom_valide) == nom_valide if nom_valide else None,
-            db.func.lower(Taxref.nom_vern) == nom_vern if nom_vern else None,
-            db.func.lower(Taxref.nom_vern_eng) == nom_vern_eng if nom_vern_eng else None,
-            db.func.lower(Taxref.url) == url if url else None,
+            db.func.lower(Taxref.nom_valide) == nom_valide,
+            db.func.lower(Taxref.nom_vern) == nom_vern,
+            db.func.lower(Taxref.nom_vern_eng) == nom_vern_eng,
+            db.func.lower(Taxref.url) == url,
             Taxref.regne == newTaxon.get("regne"),
             Taxref.phylum == newTaxon.get("phylum"),
             Taxref.classe == newTaxon.get("classe"),
