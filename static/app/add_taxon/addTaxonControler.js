@@ -85,24 +85,10 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
     };
 
     // Insertion d'un nouveau taxon en Bdd
-    ctrl.addTaxon = function(newTaxon) {
+    ctrl.addTaxon = function(newTaxon, save) {
         newTaxon.nom_complet = newTaxon.lb_nom + ' ' + newTaxon.lb_auteur;
         // Retourne une promesse pour gérer l'asynchronisme
-        return TaxonService.addTaxon(newTaxon)
-            .then(response => {
-                ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
-                return response; // Réussite, on retourne la réponse
-            })
-            .catch(error => {
-                ctrl.resetForm(); // Réinitialisation du formulaire même si erreur
-                throw error; // On relance l'erreur pour la gérer avec 'await'
-            });
-    };
-
-    // Suppression du dernier taxon ajouté en bdd
-    ctrl.deleteTaxon = function() {
-        // Retourne une promesse pour gérer l'asynchronisme
-        return TaxonService.deleteTaxon()
+        return TaxonService.addTaxon(newTaxon, save)
             .then(response => {
                 return response; // Réussite, on retourne la réponse
             })
@@ -110,7 +96,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                 throw error; // On relance l'erreur pour la gérer avec 'await'
             });
     };
-    
     
 
     //--------------------- Ajout de nouveau(x) taxon(s) ------------------------------------
@@ -146,13 +131,15 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         delete newTaxon.rangTaxonomique;
 
         // Insertion du taxon en bdd avec message de réussite ou d'erreur
-        ctrl.addTaxon(newTaxon)
+        ctrl.addTaxon(newTaxon, true)
             .then(response => {
                 alert(response.message);
             })
             .catch(error => {
                 alert("ECHEC DE L'AJOUT.\n Erreur : "+error.data.message);
             });
+        
+        ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
 
     };
 
@@ -165,37 +152,66 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
                     $scope.$apply(async function() {
                         ctrl.csvData = results.data;
                         let i = 0;
+                        let j = 0;
+                        let k = 0;
                         let listErrors = [];
+                        let seenTaxons = new Set();  // Ensemble pour stocker les taxons déjà vus
     
-                        // Boucle asynchrone pour attendre chaque ajout
+                        // Double vérification en BDD : insertion possible + doublon dans la bdd
                         for (const taxon of ctrl.csvData) {
                             i ++;
+                            // Boucle asynchrone pour attendre chaque vérification
                             try {
-                                await ctrl.addTaxon(taxon);
+                                await ctrl.addTaxon(taxon, false);
                             } catch (error) {
-                                if (error.data.error === "Doublon") {
-                                    listErrors.push({ligne: i, type: error.data.error});
-                                } else {
-                                    listErrors.push({ligne: i, type: error.data.error});
+                                if (error.data.error != "correct") {
+                                    listErrors.push({ligne: i, type: error.data.error, msg: error.data.message});
                                 }
                             }
                         }
 
-                        // SI pas d'erreur d'insertion i.e. tous les taxons ont été ajoutés avec succès
+                        // Vérification des doublons au sein même du fichier
+                        for (const taxon of ctrl.csvData) {
+                            j ++;
+                            try {
+                                // Création d'une clé unique en concaténant les valeurs à vérifier
+                                let taxonKey = (taxon.lb_nom.toLowerCase() + taxon.lb_auteur.toLowerCase() + 
+                                                taxon.nom_complet.toLowerCase() + taxon.nom_valide.toLowerCase() +
+                                                taxon.nom_vern.toLowerCase() + taxon.nom_vern_eng.toLowerCase() +
+                                                taxon.url.toLowerCase() +
+                                                taxon.regne + taxon.phylum +
+                                                taxon.classe + taxon.ordre +
+                                                taxon.famille + taxon.sous_famille +
+                                                taxon.tribu +
+                                                taxon.id_statut + taxon.id_habitat +
+                                                taxon.id_rang +
+                                                taxon.group1_inpn + taxon.group2_inpn);
+                                if (seenTaxons.has(taxonKey)) {
+                                    listErrors.push({ligne: j, type: "Doublon interne", msg: "Taxon dupliqué au sein du fichier."});
+                                } else {
+                                    seenTaxons.add(taxonKey);  // Ajouter la clé au Set
+                                }
+                            } catch (error) {
+                                console.log("Erreur dans la vérification des doublons au sein du fichier:", error);
+                                alert("Erreur dans la vérification des doublons au sein du fichier:", error);
+                            }
+                        }
+
+                        // SI 0 erreur : on insère TOUS les taxons du fichier
                         if (listErrors.length == 0) {
-                            alert('Tous les taxons (' + ctrl.csvData.length + ' taxons) du fichier csv "' + ctrl.csvFile.name + '" ont été ajoutés avec succès !');
-                        } else { // SINON suppression des taxons ajoutés et message d'erreur (avec la liste des lignes incorrectes)
-                            
-                            // Boucle asynchrone pour attendre chaque suppression
-                            for (let i = 0; i < ctrl.csvData.length - listErrors.length; i++) {
+                            for (const taxon of ctrl.csvData) {
+                                k ++;
+                                // Boucle asynchrone pour attendre chaque ajout
                                 try {
-                                    await ctrl.deleteTaxon();
+                                    await ctrl.addTaxon(taxon, true);
                                 } catch (error) {
-                                    alert("ERREUR DE SUPPRESSION DE TAXON(S) ! Cet incident doit être gérer en bdd à la main.");
+                                    alert("ECHEC ANORMAL DE L'AJOUT de la ligne numéro "+ k +". \n Veuillez procéder à des vérifications à la main en base de données.");
                                 }
                             }
+                            alert('Tous les taxons (' + ctrl.csvData.length + ' taxons) du fichier csv "' + ctrl.csvFile.name + '" ont été ajoutés avec succès !');
+                        } else { // SINON Message d'erreur avec la liste des lignes incorrectes
                             alert("ECHEC DE L'AJOUT DES TAXONS. Erreur(s) aux lignes: \n" +
-                                listErrors.map(e => e.ligne + " : " + e.type).join(', \n'));
+                                listErrors.map(e => "Ligne "+ e.ligne + " : " + e.type).join(', \n'));
                         }
                         
                         // Réinitialisation du fichier CSV en forcant Angular à détecter le changement

@@ -439,16 +439,17 @@ def get_bib_hab():
     return [d.as_dict() for d in data]
 
 
-
 @adresses.route("/addTaxon", methods=["POST"])
 def add_taxon():
     """
     Route utilisée pour insérer un nouveau taxon en bdd
     params POST :
         - objet représentant les données d'un taxon à ajouter.
+        - save: boolean qui détermine si le taxon doit être enregistré ou juste vérifié.
     """
     try:
         newTaxon = request.get_json()
+        save = newTaxon.get('save', False)  # Récupère 'save' ou False si non défini
 
         # Convertir uniquement certains attributs à vérifier en minuscule pour la comparaison
         lb_nom = newTaxon.get("lb_nom").lower() 
@@ -483,7 +484,7 @@ def add_taxon():
         ).first()
 
         if existing_taxon:
-            return jsonify({"error": "Doublon", "message": "Le taxon existe déjà dans la base de données."}), 409
+            return jsonify({"error": "Doublon en bdd", "message": "Le taxon existe déjà dans la base de données."}), 409
 
         # Calculer la prochaine valeur négative pour cd_nom
         next_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1).scalar()
@@ -529,6 +530,9 @@ def add_taxon():
             nom_francais=newTaxon.get("nom_vern"),
         )
 
+        if not save:
+            return jsonify({"error": "correct", "message": "Aucune erreur détectée. Le taxon peut être ajouté après vérification de doublons au sein même du fichier"}), 200
+
         db.session.add(add_Taxref)
         db.session.add(add_CorNomListe_100)
         db.session.add(add_CorNomListe_101)
@@ -539,38 +543,7 @@ def add_taxon():
 
     except Exception as e:
         # En cas d'erreur, renvoyer le message d'erreur
-        return jsonify({"error": "Autre erreur", "message": str(e)}), 500
-
-
-
-
-@adresses.route("/deleteTaxon", methods=["POST"])
-def delete_taxon():
-    """
-    Route utilisée pour supprimer le dernier taxon ajouté en bdd
-    """
-    # Calculer la dernière valeur négative pour cd_nom
-    last_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0)).scalar()
-
-    try:
-        # Supprimer les entrées dans CorNomListe
-        CorNomListe.query.filter_by(id_nom=last_cd_nom).delete()
-
-        # Supprimer les entrées dans Taxref et BibNoms
-        BibNoms.query.filter_by(cd_nom=last_cd_nom).delete()
-        Taxref.query.filter_by(cd_nom=last_cd_nom).delete() # ATTENTION la suppression dans la table Taxref doit se faire en dernière
-        
-        # Commit les modifications
-        db.session.commit()
-        
-        return jsonify({"message": "Taxon deleted successfully"}), 200
-    
-    except Exception as e:
-        # Annuler la transaction en cas d'erreur
-        db.session.rollback()
-        print(f"Erreur lors de la suppression du taxon: {e}")
-        return jsonify({"message": "Erreur lors de la suppression du taxon"}), 500
-
+        return jsonify({"error": "Autre erreur (le plus souvent une erreur de syntaxe, l'oubli d'un attribut, etc.)", "message": str(e)}), 500
 
 
 
