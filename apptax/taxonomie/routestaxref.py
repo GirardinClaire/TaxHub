@@ -449,10 +449,10 @@ def add_taxon():
     """
     try:
         newTaxon = request.get_json()
-        save = newTaxon.get('save', False)  # Récupère 'save' ou False si non défini
+        save = newTaxon.get("save", False)  # Récupère 'save' ou False si non défini
 
         # Convertir uniquement certains attributs à vérifier en minuscule pour la comparaison
-        lb_nom = newTaxon.get("lb_nom").lower() 
+        lb_nom = newTaxon.get("lb_nom").lower()
         lb_auteur = newTaxon.get("lb_auteur").lower()
         nom_complet = newTaxon.get("nom_complet").lower()
         nom_valide = newTaxon.get("nom_valide").lower()
@@ -461,33 +461,47 @@ def add_taxon():
         url = newTaxon.get("url").lower()
 
         # Vérifier si un taxon similaire existe déjà dans la base de données
-        existing_taxon = db.session.query(Taxref).filter(
-            db.func.lower(Taxref.lb_nom) == lb_nom,
-            db.func.lower(Taxref.lb_auteur) == lb_auteur,
-            db.func.lower(Taxref.nom_complet) == nom_complet,
-            db.func.lower(Taxref.nom_valide) == nom_valide,
-            db.func.lower(Taxref.nom_vern) == nom_vern,
-            db.func.lower(Taxref.nom_vern_eng) == nom_vern_eng,
-            db.func.lower(Taxref.url) == url,
-            Taxref.regne == newTaxon.get("regne"),
-            Taxref.phylum == newTaxon.get("phylum"),
-            Taxref.classe == newTaxon.get("classe"),
-            Taxref.ordre == newTaxon.get("ordre"),
-            Taxref.famille == newTaxon.get("famille"),
-            Taxref.sous_famille == newTaxon.get("sous_famille"),
-            Taxref.tribu == newTaxon.get("tribu"),
-            Taxref.id_statut == newTaxon.get("id_statut"),
-            Taxref.id_habitat == newTaxon.get("id_habitat"),
-            Taxref.id_rang == newTaxon.get("id_rang"),
-            Taxref.group1_inpn == newTaxon.get("group1_inpn"),
-            Taxref.group2_inpn == newTaxon.get("group2_inpn")
-        ).first()
+        existing_taxon = (
+            db.session.query(Taxref)
+            .filter(
+                db.func.lower(Taxref.lb_nom) == lb_nom,
+                db.func.lower(Taxref.lb_auteur) == lb_auteur,
+                db.func.lower(Taxref.nom_complet) == nom_complet,
+                db.func.lower(Taxref.nom_valide) == nom_valide,
+                db.func.lower(Taxref.nom_vern) == nom_vern,
+                db.func.lower(Taxref.nom_vern_eng) == nom_vern_eng,
+                db.func.lower(Taxref.url) == url,
+                Taxref.regne == newTaxon.get("regne"),
+                Taxref.phylum == newTaxon.get("phylum"),
+                Taxref.classe == newTaxon.get("classe"),
+                Taxref.ordre == newTaxon.get("ordre"),
+                Taxref.famille == newTaxon.get("famille"),
+                Taxref.sous_famille == newTaxon.get("sous_famille"),
+                Taxref.tribu == newTaxon.get("tribu"),
+                Taxref.id_statut == newTaxon.get("id_statut"),
+                Taxref.id_habitat == newTaxon.get("id_habitat"),
+                Taxref.id_rang == newTaxon.get("id_rang"),
+                Taxref.group1_inpn == newTaxon.get("group1_inpn"),
+                Taxref.group2_inpn == newTaxon.get("group2_inpn"),
+            )
+            .first()
+        )
 
         if existing_taxon:
-            return jsonify({"error": "Doublon en bdd", "message": "Le taxon existe déjà dans la base de données."}), 409
+            return (
+                jsonify(
+                    {
+                        "error": "Doublon en bdd",
+                        "message": "Le taxon existe déjà dans la base de données.",
+                    }
+                ),
+                409,
+            )
 
         # Calculer la prochaine valeur négative pour cd_nom
-        next_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1).scalar()
+        next_cd_nom = db.session.query(
+            db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1
+        ).scalar()
 
         # Créer les nouveaux enregistrements
         add_Taxref = Taxref(
@@ -531,7 +545,15 @@ def add_taxon():
         )
 
         if not save:
-            return jsonify({"error": "correct", "message": "Aucune erreur détectée. Le taxon peut être ajouté après vérification de doublons au sein même du fichier"}), 200
+            return (
+                jsonify(
+                    {
+                        "error": "correct",
+                        "message": "Aucune erreur détectée. Le taxon peut être ajouté après vérification de doublons au sein même du fichier",
+                    }
+                ),
+                200,
+            )
 
         db.session.add(add_Taxref)
         db.session.add(add_CorNomListe_100)
@@ -543,8 +565,15 @@ def add_taxon():
 
     except Exception as e:
         # En cas d'erreur, renvoyer le message d'erreur
-        return jsonify({"error": "Autre erreur (le plus souvent une erreur de syntaxe, l'oubli d'un attribut, etc.)", "message": str(e)}), 500
-
+        return (
+            jsonify(
+                {
+                    "error": "Autre erreur (le plus souvent une erreur de syntaxe, l'oubli d'un attribut, etc.)",
+                    "message": str(e),
+                }
+            ),
+            500,
+        )
 
 
 ### Fonctions Utiles ###
