@@ -115,7 +115,7 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         // Convertions respectives de statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;
         newTaxon.id_habitat = newTaxon.habitat.id_habitat;
-        newTaxon.id_rang = newTaxon.rang.id_rang.trim();
+        newTaxon.id_rang = newTaxon.rang.id_rang.trim(); // retire les espaces pour être cohérent avec le stockage sur 2 caractèe comme dans la table taxref (attention bib_taxref_rangs sur 4 caratc-=ères 'TR  ')
         
 
         // Récupération des rangs taxonomiques choisis
