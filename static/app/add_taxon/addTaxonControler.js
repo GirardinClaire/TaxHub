@@ -1,7 +1,13 @@
 app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($scope, TaxonService, loginSrv) {
 
     var ctrl = this;
+
     ctrl.route = 'addTaxon';
+    ctrl.viewMode = 'unique'; // Par défaut, l'affichage sera sur l'ajout unique
+
+    ctrl.csvFile = null,
+    ctrl.csvData = [];
+
 
     // Vérifiez si l'utilisateur est admin, pour y adapter le contenu de la page
     ctrl.isAdmin = loginSrv.getCurrentUserRights().admin;
@@ -12,25 +18,23 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         TaxonService.getIdNomHabitats(),
         TaxonService.getIdNomRangs(),
         TaxonService.getGroup1Inpn(),
-        TaxonService.getGroup2Inpn(),
-        TaxonService.getGroup3Inpn()
-    ]).then(([statuts, habitats, rangs, group1Inpn, group2Inpn, group3Inpn]) => {
-        ctrl.statuts = statuts;
-        ctrl.habitats = habitats;
-        ctrl.rangs = rangs;
-        ctrl.group1Inpn = group1Inpn;
-        ctrl.group2Inpn = group2Inpn;
-        ctrl.group3Inpn = group3Inpn;
+        TaxonService.getGroup2Inpn()
+    ]).then(([listStatuts, listHabitats, listRangs, listGroup1Inpn, listGroup2Inpn]) => {
+        ctrl.statuts = listStatuts;
+        ctrl.habitats = listHabitats;
+        ctrl.rangs = listRangs;
+        ctrl.group1Inpn = listGroup1Inpn;
+        ctrl.group2Inpn = listGroup2Inpn;
 
         // Sauvegarder les valeurs par défaut dans une variable
         ctrl.defaultTaxon = {
-            lb_nom: null,
-            lb_auteur: null,
-            nom_complet: null,
-            nom_valide: null,
-            nom_vern: null,
-            nom_vern_eng: null,
-            url: null,
+            lb_nom: '',
+            lb_auteur: '',
+            nom_complet: '',
+            nom_valide: '',
+            nom_vern: '',
+            nom_vern_eng: '',
+            url: '',
 
             statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé'),
             id_statut: ctrl.statuts.find(s => s.nom_statut === 'Non précisé').id_statut,
@@ -42,7 +46,6 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
 
             group1_inpn: '',
             group2_inpn: '',
-            group3_inpn: null,
         };
 
         // Initialiser newTaxon avec les valeurs par défaut
@@ -50,9 +53,10 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
 
         // Appliquer les changements dans $scope
         $scope.$apply();
-    }).catch(error => {
-        console.error("Erreur lors du chargement des données:", error);
-    });
+
+        }).catch(error => {
+            console.error("Erreur lors du chargement des données:", error);
+        });
 
 
 
@@ -73,11 +77,35 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         $scope.$broadcast('resetTaxHierarchy'); // Appel de resetTaxHierarchy (Directive) pour réinitialiser les saisies des rangs taxonomiques
     };
 
+    // Fonction appelée lorsqu'un fichier est sélectionné
+    ctrl.uploadCSV = function(file) {
+        ctrl.csvFile = file;
+    };
+
+    // Fonction pour retirer le fichier CSV sélectionné
+    ctrl.removeCSV = function() {
+        ctrl.csvFile = null;
+    };
+
+    // Insertion d'un nouveau taxon en Bdd
+    ctrl.addTaxon = function(newTaxon, save) {
+        newTaxon.nom_complet = newTaxon.lb_nom + ' ' + newTaxon.lb_auteur;
+        // Retourne une promesse pour gérer l'asynchronisme
+        return TaxonService.addTaxon(newTaxon, save)
+            .then(response => {
+                return response; // Réussite, on retourne la réponse
+            })
+            .catch(error => {
+                throw error; // On relance l'erreur pour la gérer avec 'await'
+            });
+    };
+    
+
+    //--------------------- Ajout de nouveau(x) taxon(s) ------------------------------------
 
 
-    //--------------------- Ajout d'un nouveau taxon ------------------------------------
-
-    ctrl.addTaxon = function(newTaxon) {
+    // Ajout unique
+    ctrl.addTaxonForm = function(newTaxon) {
         // Vérification des champs obligatoires
         if (!newTaxon.lb_nom || !newTaxon.rang || newTaxon.group1_inpn === '' || newTaxon.group2_inpn === '') {
             alert("Veuillez remplir tous les champs obligatoires.\n A savoir : 'Nom du taxon', 'Rang', 'Groupe INPN 1' et 'Groupe INPN 2'");
@@ -87,16 +115,17 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         // Convertions respectives de statut, habitat et rang en id_statut, id_habitat et id_rang
         newTaxon.id_statut = newTaxon.statut.id_statut;
         newTaxon.id_habitat = newTaxon.habitat.id_habitat;
-        newTaxon.id_rang = newTaxon.rang.id_rang;
+        newTaxon.id_rang = newTaxon.rang.id_rang.trim(); // retire les espaces pour être cohérent avec le stockage sur 2 caractèe comme dans la table taxref (attention bib_taxref_rangs sur 4 caratc-=ères 'TR  ')
+        
 
         // Récupération des rangs taxonomiques choisis
-        newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? null;
-        newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? null;
-        newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? null;
-        newTaxon.ordre = newTaxon.rangTaxonomique?.ordre ?? null;
-        newTaxon.famille = newTaxon.rangTaxonomique?.famille ?? null;
-        newTaxon.sous_famille = newTaxon.rangTaxonomique?.sous_famille ?? null;
-        newTaxon.tribu = newTaxon.rangTaxonomique?.tribu ?? null;
+        newTaxon.regne = newTaxon.rangTaxonomique?.regne ?? '';
+        newTaxon.phylum = newTaxon.rangTaxonomique?.phylum ?? '';
+        newTaxon.classe = newTaxon.rangTaxonomique?.classe ?? '';
+        newTaxon.ordre = newTaxon.rangTaxonomique?.ordre ?? '';
+        newTaxon.famille = newTaxon.rangTaxonomique?.famille ?? '';
+        newTaxon.sous_famille = newTaxon.rangTaxonomique?.sous_famille ?? '';
+        newTaxon.tribu = newTaxon.rangTaxonomique?.tribu ?? '';
 
         // Nettoyage des propriétés inutilisées
         delete newTaxon.statut;
@@ -104,13 +133,102 @@ app.controller('addTaxonCtrl', ['$scope', 'TaxonService', 'loginSrv', function($
         delete newTaxon.rang;
         delete newTaxon.rangTaxonomique;
 
-        // Envoi des données à l'API pour insérer le nouveau taxon en bdd
-        TaxonService.addTaxon(newTaxon).then(response => {
-            console.log('Taxon ajouté avec succès !', Object.keys(ctrl.newTaxon).length, ctrl.newTaxon);
-            ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
-        }).catch(error => {
-            console.error("Erreur lors de l'ajout du taxon:", error);
-        });
+        // Insertion du taxon en bdd avec message de réussite ou d'erreur
+        ctrl.addTaxon(newTaxon, true)
+            .then(response => {
+                alert(response.message);
+            })
+            .catch(error => {
+                alert("ECHEC DE L'AJOUT.\n Erreur : "+error.data.message);
+            });
+        
+        ctrl.resetForm(); // Réinitialisation du formulaire après l'ajout
 
     };
+
+
+    // Ajouts multiples
+    ctrl.addTaxonsCSV = async function() {
+        if (ctrl.csvFile) {
+            Papa.parse(ctrl.csvFile, {
+                complete: async function(results) {
+                    $scope.$apply(async function() {
+                        ctrl.csvData = results.data;
+                        let i = 0;
+                        let j = 0;
+                        let k = 0;
+                        ctrl.errors = []; // Réinitialiser les erreurs
+                        let seenTaxons = new Set();  // Ensemble pour stocker les taxons déjà vus
+
+                        // Double vérification en BDD : insertion possible + doublon dans la bdd
+                        for (const taxon of ctrl.csvData) {
+                            i ++;
+                            // Boucle asynchrone pour attendre chaque vérification
+                            try {
+                                await ctrl.addTaxon(taxon, false);
+                            } catch (error) {
+                                if (error.data.error != "correct") {
+                                    ctrl.errors.push({ligne: i, type: error.data.error, msg: error.data.message});
+                                }
+                            }
+                        }
+
+                        // Vérification des doublons au sein même du fichier
+                        for (const taxon of ctrl.csvData) {
+                            j ++;
+                            try {
+                                // Création d'une clé unique en concaténant les valeurs à vérifier
+                                let taxonKey = (taxon.lb_nom.toLowerCase() + taxon.lb_auteur.toLowerCase() + 
+                                                taxon.nom_complet.toLowerCase() + taxon.nom_valide.toLowerCase() +
+                                                taxon.nom_vern.toLowerCase() + taxon.nom_vern_eng.toLowerCase() +
+                                                taxon.url.toLowerCase() +
+                                                taxon.regne + taxon.phylum +
+                                                taxon.classe + taxon.ordre +
+                                                taxon.famille + taxon.sous_famille +
+                                                taxon.tribu +
+                                                taxon.id_statut + taxon.id_habitat +
+                                                taxon.id_rang +
+                                                taxon.group1_inpn + taxon.group2_inpn);
+                                if (seenTaxons.has(taxonKey)) {
+                                    ctrl.errors.push({ligne: j, type: "Doublon interne", msg: "Taxon dupliqué au sein du fichier."});
+                                } else {
+                                    seenTaxons.add(taxonKey);  // Ajouter la clé au Set
+                                }
+                            } catch (error) {
+                                console.log("Erreur dans la vérification des doublons au sein du fichier:", error.message);
+                                alert("Erreur dans la vérification des doublons au sein du fichier: " + error.message);
+                            }
+                        }
+
+                        // Trier les erreurs par ordre croissant de ligne
+                        ctrl.errors.sort((a, b) => a.ligne - b.ligne);
+
+                        // SI 0 erreur : insertion de TOUS les taxons du fichier
+                        if (ctrl.errors.length == 0) {
+                            for (const taxon of ctrl.csvData) {
+                                k ++;
+                                // Boucle asynchrone pour attendre chaque ajout, et éviter les erreurs d'attibution de cd_nom notamment
+                                try {
+                                    await ctrl.addTaxon(taxon, true);
+                                } catch (error) {
+                                    alert("ECHEC ANORMAL DE L'AJOUT de la ligne numéro " + k + ". \n Veuillez procéder à des vérifications à la main en base de données.");
+                                }
+                            }
+                            alert('Tous les taxons (' + ctrl.csvData.length + ' taxons) du fichier csv "' + ctrl.csvFile.name + '" ont été ajoutés avec succès !');
+                        } else { // SINON affichage des messages d'erreur
+                            alert("ECHEC DE L'AJOUT DES TAXONS. Veuillez vérifier les erreurs affichées sur la page.");
+                        }
+                        
+                        // Réinitialisation du fichier CSV en forçant Angular à détecter le changement
+                        ctrl.csvFile = null;
+                        $scope.$apply();
+                    });
+                },
+                header: true
+            });
+        } else {
+            alert("Veuillez sélectionner un fichier CSV.");
+        }
+    };
+
 }]);

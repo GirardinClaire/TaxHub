@@ -319,8 +319,12 @@ def get_group1_inpn_taxref():
     """
     Retourne la liste des groupes 1 inpn
     """
-    data = (db.session.query(Taxref.group1_inpn).distinct(Taxref.group1_inpn)).all()
-    return [d[0] for d in data]
+    data = (
+        db.session.query(Taxref.group1_inpn)
+        .distinct(Taxref.group1_inpn)
+        .filter(Taxref.group1_inpn != None)
+    ).all()
+    return ["Non renseigné"] + [d[0] for d in data]
 
 
 @adresses.route("/groupe2_inpn", methods=["GET"])
@@ -329,8 +333,12 @@ def get_group2_inpn_taxref():
     """
     Retourne la liste des groupes 2 inpn
     """
-    data = (db.session.query(Taxref.group2_inpn).distinct(Taxref.group2_inpn)).all()
-    return [d[0] for d in data]
+    data = (
+        db.session.query(Taxref.group2_inpn)
+        .distinct(Taxref.group2_inpn)
+        .filter(Taxref.group2_inpn != None)
+    ).all()
+    return ["Non renseigné"] + [d[0] for d in data]
 
 
 @adresses.route("/groupe3_inpn", methods=["GET"])
@@ -439,51 +447,141 @@ def get_bib_hab():
     return [d.as_dict() for d in data]
 
 
-### METHODS 'POST'
-@adresses.route("/", methods=["POST"])
+@adresses.route("/addTaxon", methods=["POST"])
 def add_taxon():
     """
     Route utilisée pour insérer un nouveau taxon en bdd
     params POST :
-        - objet représentant les données d'un taxon à ajouter. C'est un modèle contenant
-            toutes les informations nécessaires pour créer un nouveau taxon.
+        - objet représentant les données d'un taxon à ajouter.
+        - save: boolean qui détermine si le taxon doit être enregistré ou juste vérifié.
     """
-    newTaxon = request.get_json()
-    # Calculer la prochaine valeur négative pour cd_nom
-    next_cd_nom = db.session.query(db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1).scalar()
+    try:
+        newTaxon = request.get_json()
+        save = newTaxon.get("save", False)  # Récupère 'save' ou False si non défini
 
-    new_taxon = Taxref(
-        cd_nom=next_cd_nom,
-        cd_ref=next_cd_nom,
-        cd_taxsup=newTaxon.get("cd_taxsup"),
-        cd_sup=newTaxon.get("cd_sup"),
-        nom_complet_html=newTaxon.get("nom_complet_html"),
-        lb_nom=newTaxon.get("lb_nom"),
-        lb_auteur=newTaxon.get("lb_auteur"),
-        nom_complet=newTaxon.get("nom_complet"),
-        nom_valide=newTaxon.get("nom_valide"),
-        nom_vern=newTaxon.get("nom_vern"),
-        nom_vern_eng=newTaxon.get("nom_vern_eng"),
-        url=newTaxon.get("url"),
-        regne=newTaxon.get("regne"),
-        phylum=newTaxon.get("phylum"),
-        classe=newTaxon.get("classe"),
-        ordre=newTaxon.get("ordre"),
-        famille=newTaxon.get("famille"),
-        sous_famille=newTaxon.get("sous_famille"),
-        tribu=newTaxon.get("tribu"),
-        id_statut=newTaxon.get("id_statut"),
-        id_habitat=newTaxon.get("id_habitat"),
-        id_rang=newTaxon.get("id_rang"),
-        group1_inpn=newTaxon.get("group1_inpn"),
-        group2_inpn=newTaxon.get("group2_inpn"),
-        group3_inpn=newTaxon.get("group3_inpn"),
-    )
+        # Convertir uniquement certains attributs à vérifier en minuscule pour la comparaison
+        lb_nom = newTaxon.get("lb_nom").lower()
+        lb_auteur = newTaxon.get("lb_auteur").lower()
+        nom_complet = newTaxon.get("nom_complet").lower()
+        nom_valide = newTaxon.get("nom_valide").lower()
+        nom_vern = newTaxon.get("nom_vern").lower()
+        nom_vern_eng = newTaxon.get("nom_vern_eng").lower()
+        url = newTaxon.get("url").lower()
 
-    db.session.add(new_taxon)
-    db.session.commit()
+        # Vérifier si un taxon similaire existe déjà dans la base de données
+        existing_taxon = (
+            db.session.query(Taxref)
+            .filter(
+                db.func.lower(Taxref.lb_nom) == lb_nom,
+                db.func.lower(Taxref.lb_auteur) == lb_auteur,
+                db.func.lower(Taxref.nom_complet) == nom_complet,
+                db.func.lower(Taxref.nom_valide) == nom_valide,
+                db.func.lower(Taxref.nom_vern) == nom_vern,
+                db.func.lower(Taxref.nom_vern_eng) == nom_vern_eng,
+                db.func.lower(Taxref.url) == url,
+                Taxref.regne == newTaxon.get("regne"),
+                Taxref.phylum == newTaxon.get("phylum"),
+                Taxref.classe == newTaxon.get("classe"),
+                Taxref.ordre == newTaxon.get("ordre"),
+                Taxref.famille == newTaxon.get("famille"),
+                Taxref.sous_famille == newTaxon.get("sous_famille"),
+                Taxref.tribu == newTaxon.get("tribu"),
+                Taxref.id_statut == newTaxon.get("id_statut"),
+                Taxref.id_habitat == newTaxon.get("id_habitat"),
+                Taxref.id_rang == newTaxon.get("id_rang"),
+                Taxref.group1_inpn == newTaxon.get("group1_inpn"),
+                Taxref.group2_inpn == newTaxon.get("group2_inpn"),
+            )
+            .first()
+        )
 
-    return jsonify({"message": "Taxon added successfully"}), 201
+        if existing_taxon:
+            return (
+                jsonify(
+                    {
+                        "error": "Doublon en bdd",
+                        "message": "Le taxon existe déjà dans la base de données.",
+                    }
+                ),
+                409,
+            )
+
+        # Calculer la prochaine valeur négative pour cd_nom
+        next_cd_nom = db.session.query(
+            db.func.coalesce(db.func.min(Taxref.cd_nom), 0) - 1
+        ).scalar()
+
+        # Créer les nouveaux enregistrements
+        add_Taxref = Taxref(
+            cd_nom=next_cd_nom,
+            cd_ref=next_cd_nom,
+            lb_nom=newTaxon.get("lb_nom"),
+            lb_auteur=newTaxon.get("lb_auteur"),
+            nom_complet=newTaxon.get("nom_complet"),
+            nom_valide=newTaxon.get("nom_valide"),
+            nom_vern=newTaxon.get("nom_vern"),
+            nom_vern_eng=newTaxon.get("nom_vern_eng"),
+            url=newTaxon.get("url"),
+            regne=newTaxon.get("regne"),
+            phylum=newTaxon.get("phylum"),
+            classe=newTaxon.get("classe"),
+            ordre=newTaxon.get("ordre"),
+            famille=newTaxon.get("famille"),
+            sous_famille=newTaxon.get("sous_famille"),
+            tribu=newTaxon.get("tribu"),
+            id_statut=newTaxon.get("id_statut"),
+            id_habitat=newTaxon.get("id_habitat"),
+            id_rang=newTaxon.get("id_rang"),
+            group1_inpn=newTaxon.get("group1_inpn"),
+            group2_inpn=newTaxon.get("group2_inpn"),
+        )
+
+        add_CorNomListe_100 = CorNomListe(
+            id_liste=100,
+            id_nom=next_cd_nom,
+        )
+
+        add_CorNomListe_101 = CorNomListe(
+            id_liste=101,
+            id_nom=next_cd_nom,
+        )
+
+        add_BibNoms = BibNoms(
+            cd_nom=next_cd_nom,
+            cd_ref=next_cd_nom,
+            nom_francais=newTaxon.get("nom_vern"),
+        )
+
+        if not save:
+            return (
+                jsonify(
+                    {
+                        "error": "correct",
+                        "message": "Aucune erreur détectée. Le taxon peut être ajouté après vérification de doublons au sein même du fichier",
+                    }
+                ),
+                200,
+            )
+
+        db.session.add(add_Taxref)
+        db.session.add(add_CorNomListe_100)
+        db.session.add(add_CorNomListe_101)
+        db.session.add(add_BibNoms)
+        db.session.commit()
+
+        return jsonify({"message": "Taxon ajouté avec succès !"}), 201
+
+    except Exception as e:
+        # En cas d'erreur, renvoyer le message d'erreur
+        return (
+            jsonify(
+                {
+                    "error": "Autre erreur (le plus souvent une erreur de syntaxe, l'oubli d'un attribut, etc.)",
+                    "message": str(e),
+                }
+            ),
+            500,
+        )
 
 
 ### Fonctions Utiles ###

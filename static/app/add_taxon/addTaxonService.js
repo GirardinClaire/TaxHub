@@ -20,12 +20,9 @@ app.service('TaxonService', ['$http', 'backendCfg', function($http, backendCfg) 
         return $http.get(backendCfg.api_url+'taxref/groupe2_inpn').then(response => response.data);
     };
 
-    this.getGroup3Inpn = function() {
-        return $http.get(backendCfg.api_url+'taxref/groupe3_inpn').then(response => response.data);
-    };
-
-    this.addTaxon = function(newTaxon) {
-        return $http.post(backendCfg.api_url+'taxref', newTaxon).then(response => response.data);
+    this.addTaxon = function(newTaxon, save) {
+        newTaxon.save = save;  // Ajout du paramètre 'save' à l'objet 'newTaxon'
+        return $http.post(backendCfg.api_url+'taxref/addTaxon', newTaxon).then(response => response.data);
     };
 
 }]);
