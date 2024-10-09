@@ -22,10 +22,13 @@ class BibNoms(db.Model):
     nom_francais = db.Column(db.Unicode)
     comments = db.Column(db.Unicode)
 
-    taxref = db.relationship("Taxref")
-    attributs = db.relationship("CorTaxonAttribut")
-    listes = db.relationship("CorNomListe")
+    taxref = db.relationship("Taxref", back_populates="bib_nom")
+    attributs = db.relationship("CorTaxonAttribut", back_populates="bib_nom")
+    listes = db.relationship("CorNomListe", back_populates="bib_nom")
+
     # medias relationship defined through backref
+    def __repr__(self):
+        return f"<BibNoms {self.nom_francais}>"
 
 
 @serializable
@@ -45,11 +48,11 @@ class CorTaxonAttribut(db.Model):
         primary_key=True,
     )
     valeur_attribut = db.Column(db.Text, nullable=False)
-    bib_nom = db.relationship("BibNoms")
+    bib_nom = db.relationship("BibNoms", back_populates="attributs")
     bib_attribut = db.relationship("BibAttributs")
 
     def __repr__(self):
-        return "<CorTaxonAttribut %r>" % self.valeur_attribut
+        return f"<CorTaxonAttribut {self.valeur_attribut}>"
 
 
 @serializable
@@ -61,10 +64,10 @@ class BibThemes(db.Model):
     desc_theme = db.Column(db.Unicode)
     ordre = db.Column(db.Integer)
     id_droit = db.Column(db.Integer)
-    attributs = db.relationship("BibAttributs", lazy="select")
+    attributs = db.relationship("BibAttributs", lazy="select", back_populates="theme")
 
     def __repr__(self):
-        return "<BibThemes %r>" % self.nom_theme
+        return f"<BibThemes {self.nom_theme}>"
 
 
 @serializable
@@ -88,10 +91,10 @@ class BibAttributs(db.Model):
         primary_key=False,
     )
     ordre = db.Column(db.Integer)
-    theme = db.relationship(BibThemes)
+    theme = db.relationship(BibThemes, back_populates="attributs")
 
     def __repr__(self):
-        return "<BibAttributs %r>" % self.nom_attribut
+        return f"<BibAttributs {self.nom_attribut}>"
 
 
 @serializable(exclude=["nom_vern_or_lb_nom"])
@@ -105,7 +108,6 @@ class Taxref(db.Model):
     regne = db.Column(db.Unicode)
     phylum = db.Column(db.Unicode)
     classe = db.Column(db.Unicode)
-    regne = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
     sous_famille = db.Column(db.Unicode)
@@ -122,7 +124,9 @@ class Taxref(db.Model):
     nom_vern_eng = db.Column(db.Unicode)
     group1_inpn = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
+    bib_nom = db.relationship(BibNoms, back_populates="taxref")
 
     @hybrid_property
     def nom_vern_or_lb_nom(self):
@@ -133,7 +137,7 @@ class Taxref(db.Model):
         return db.func.coalesce(cls.nom_vern, cls.lb_nom)
 
     def __repr__(self):
-        return "<Taxref %r>" % self.nom_complet
+        return f"<Taxref {self.nom_complet}>"
 
 
 @serializable
@@ -152,11 +156,11 @@ class CorNomListe(db.Model):
         nullable=False,
         primary_key=True,
     )
-    bib_nom = db.relationship("BibNoms")
-    bib_liste = db.relationship("BibListes")
+    bib_nom = db.relationship(BibNoms, back_populates="listes")
+    bib_liste = db.relationship("BibListes", back_populates="cnl")
 
     def __repr__(self):
-        return "<CorNomListe %r>" % self.id_liste
+        return f"<CorNomListe {self.id_liste}>"
 
 
 @serializable
@@ -171,11 +175,13 @@ class BibListes(db.Model):
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
 
-    cnl = db.relationship("CorNomListe", lazy="select")
-    noms = db.relationship("BibNoms", secondary=CorNomListe.__table__)
+    cnl = db.relationship(CorNomListe, lazy="select", back_populates="bib_liste")
+    noms = db.relationship(
+        "BibNoms", secondary=CorNomListe.__table__, overlaps="bib_nom,listes,bib_liste,cnl"
+    )
 
     def __repr__(self):
-        return "<BibListes %r>" % self.nom_liste
+        return f"<BibListes {self.nom_liste}>"
 
 
 @serializable
@@ -187,7 +193,7 @@ class BibTypesMedia(db.Model):
     desc_type_media = db.Column(db.Text)
 
     def __repr__(self):
-        return "<BibTypesMedia %r>" % self.nom_type_media
+        return f"<BibTypesMedia {self.nom_type_media}>"
 
 
 @serializable
@@ -220,7 +226,7 @@ class TMedias(db.Model):
     bib_nom = db.relationship(BibNoms, backref="medias")
 
     def __repr__(self):
-        return "<TMedias %r>" % self.titre
+        return f"<TMedias {self.titre}>"
 
 
 @serializable
@@ -228,17 +234,19 @@ class VMTaxrefListForautocomplete(db.Model):
     __tablename__ = "vm_taxref_list_forautocomplete"
     __table_args__ = {"schema": "taxonomie"}
     gid = db.Column(db.Integer, primary_key=True)
-    cd_nom = db.Column(db.Integer)
+    cd_nom = db.Column(db.Integer, ForeignKey(Taxref.cd_nom))
     search_name = db.Column(db.Unicode)
+    unaccent_search_name = db.Column(db.Unicode)
     cd_ref = db.Column(db.Integer)
     nom_valide = db.Column(db.Unicode)
     lb_nom = db.Column(db.Unicode)
     nom_vern = db.Column(db.Unicode)
     regne = db.Column(db.Unicode)
     group2_inpn = db.Column(db.Unicode)
+    group3_inpn = db.Column(db.Unicode)
 
     def __repr__(self):
-        return "<VMTaxrefListForautocomplete  %r>" % self.search_name
+        return f"<VMTaxrefListForautocomplete {self.search_name} >"
 
 
 @serializable
@@ -250,7 +258,7 @@ class BibTaxrefHabitats(db.Model):
     desc_habitat = db.Column(db.Text)
 
     def __repr__(self):
-        return "<BibTaxrefHabitats %r>" % self.nom_habitat
+        return f"<BibTaxrefHabitats {self.nom_habitat}>"
 
 
 @serializable
@@ -259,10 +267,11 @@ class BibTaxrefRangs(db.Model):
     __table_args__ = {"schema": "taxonomie"}
     id_rang = db.Column(db.Integer, primary_key=True)
     nom_rang = db.Column(db.Unicode)
+    nom_rang_en = db.Column(db.Unicode)
     tri_rang = db.Column(db.Integer)
 
     def __repr__(self):
-        return "<BibTaxrefRangs %r>" % self.nom_rang
+        return f"<BibTaxrefRangs {self.nom_rang}>"
 
 
 @serializable
@@ -273,7 +282,7 @@ class BibTaxrefStatus(db.Model):
     nom_statut = db.Column(db.Unicode)
 
     def __repr__(self):
-        return "<BibTaxrefStatus %r>" % self.nom_statut
+        return f"<BibTaxrefStatus {self.nom_statut}>"
 
 
 @serializable
@@ -287,12 +296,12 @@ class VMTaxrefHierarchie(db.Model):
     classe = db.Column(db.Unicode)
     ordre = db.Column(db.Unicode)
     famille = db.Column(db.Unicode)
-    sous_famille = db.Column(db.Unicode)  # Attribut ajouté pour l'autocomplétion avec hiérarchie taxonomique (formulaire d'insertion unique)
-    tribu = db.Column(db.Unicode)  # Attribut ajouté pour l'autocomplétion avec hiérarchie taxonomique (formulaire d'insertion unique)
+    sous_famille = db.Column(db.Unicode)  # attribut ajouté pour autocomplétion addTaxon
+    tribu = db.Column(db.Unicode)  # attribut ajouté pour autocomplétion addTaxon
     lb_nom = db.Column(db.Unicode)
     id_rang = db.Column(db.Unicode)
-    nb_tx_tr = db.Column(db.Integer)  # Attribut ajouté pour l'autocomplétion avec hiérarchie taxonomique (formulaire d'insertion unique)
-    nb_tx_sbfm = db.Column(db.Integer)  # Attribut ajouté pour l'autocomplétion avec hiérarchie taxonomique (formulaire d'insertion unique)
+    nb_tx_tr = db.Column(db.Integer)  # attribut ajouté pour autocomplétion addTaxon
+    nb_tx_sbfm = db.Column(db.Integer)  # attribut ajouté pour autocomplétion addTaxon
     nb_tx_fm = db.Column(db.Integer)
     nb_tx_or = db.Column(db.Integer)
     nb_tx_cl = db.Column(db.Integer)
@@ -300,7 +309,7 @@ class VMTaxrefHierarchie(db.Model):
     nb_tx_kd = db.Column(db.Integer)
 
     def __repr__(self):
-        return "<VMTaxrefHierarchie %r>" % self.lb_nom
+        return f"<VMTaxrefHierarchie {self.lb_nom}>"
 
 
 @serializable
@@ -322,7 +331,7 @@ class VTaxrefHierarchieBibtaxons(db.Model):
     nb_tx_kd = db.Column(db.Integer)
 
     def __repr__(self):
-        return "<VMTaxrefHierarchie %r>" % self.lb_nom
+        return f"<VTaxrefHierarchieBibtaxons {self.lb_nom}>"
 
 
 @serializable
@@ -335,7 +344,7 @@ class TaxrefBdcStatutType(db.Model):
     thematique = db.Column(db.Unicode)
     type_value = db.Column(db.Unicode)
 
-    text = db.relationship("TaxrefBdcStatutText", lazy="select")
+    text = db.relationship("TaxrefBdcStatutText", lazy="select", back_populates="type_statut")
 
     @hybrid_property
     def display(self):
@@ -371,8 +380,10 @@ class TaxrefBdcStatutText(db.Model):
     doc_url = db.Column(db.Unicode)
     enable = db.Column(db.Boolean)
 
-    type_statut = db.relationship("TaxrefBdcStatutType", lazy="select")
-    cor_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
+    type_statut = db.relationship(TaxrefBdcStatutType, lazy="select", back_populates="text")
+    cor_text = db.relationship(
+        "TaxrefBdcStatutCorTextValues", lazy="select", back_populates="text"
+    )
 
     areas = db.relationship(LAreas, secondary=bdc_statut_cor_text_area)
 
@@ -402,10 +413,10 @@ class TaxrefBdcStatutCorTextValues(db.Model):
         db.Unicode, ForeignKey("taxonomie.bdc_statut_text.id_text"), nullable=False
     )
 
-    text = db.relationship("TaxrefBdcStatutText", lazy="select")
-    value = db.relationship("TaxrefBdcStatutValues", lazy="select")
+    text = db.relationship(TaxrefBdcStatutText, lazy="select", back_populates="cor_text")
+    value = db.relationship(TaxrefBdcStatutValues, lazy="select")
 
-    taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select")
+    taxon = db.relationship("TaxrefBdcStatutTaxon", lazy="select", back_populates="value_text")
 
 
 @serializable
@@ -422,7 +433,9 @@ class TaxrefBdcStatutTaxon(db.Model):
     cd_ref = db.Column(db.Integer)
     rq_statut = db.Column(db.Unicode)
 
-    value_text = db.relationship("TaxrefBdcStatutCorTextValues", lazy="select")
+    value_text = db.relationship(
+        TaxrefBdcStatutCorTextValues, lazy="select", back_populates="taxon"
+    )
 
 
 @serializable
@@ -447,3 +460,12 @@ class VBdcStatus(db.Model):
     full_citation = db.Column(db.Unicode, primary_key=True)
     doc_url = db.Column(db.Unicode)
     type_value = db.Column(db.Unicode)
+
+
+@serializable
+class TMetaTaxref(db.Model):
+    __tablename__ = "t_meta_taxref"
+    __table_args__ = {"schema": "taxonomie"}
+    referencial_name = db.Column(db.Integer, primary_key=True)
+    version = db.Column(db.Integer)
+    update_date = db.Column(db.DateTime, default=db.func.now(), nullable=False)
