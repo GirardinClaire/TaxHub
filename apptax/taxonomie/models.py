@@ -25,8 +25,8 @@ class BibNoms(db.Model):
     taxref = db.relationship("Taxref", back_populates="bib_nom")
     attributs = db.relationship("CorTaxonAttribut", back_populates="bib_nom")
     listes = db.relationship("CorNomListe", back_populates="bib_nom")
-
     # medias relationship defined through backref
+
     def __repr__(self):
         return f"<BibNoms {self.nom_francais}>"
 
@@ -126,6 +126,7 @@ class Taxref(db.Model):
     group2_inpn = db.Column(db.Unicode)
     group3_inpn = db.Column(db.Unicode)
     url = db.Column(db.Unicode)
+
     bib_nom = db.relationship(BibNoms, back_populates="taxref")
 
     @hybrid_property
